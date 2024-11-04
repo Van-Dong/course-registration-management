@@ -13,6 +13,8 @@ import java.time.LocalDateTime;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
+@Table(name = "enrollment", uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "course_id"}),
+        indexes = {@Index(columnList = "user_id"), @Index(columnList = "course_id")})
 public class Enrollment {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
