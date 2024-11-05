@@ -24,6 +24,9 @@ public enum ErrorCode {
     AUTHENTICATION_FAILED(1012, "Email or password is not correct", HttpStatus.BAD_REQUEST),
     UNAUTHENTICATED(1013, "Unauthenticated", HttpStatus.UNAUTHORIZED),
     UNAUTHORIZED(1014, "Unauthorized", HttpStatus.FORBIDDEN),
+    ENROLLMENT_EXSITED(1015, "Enrollment already exist", HttpStatus.BAD_REQUEST),
+    PARSE_ERROR(1016, "Type cannot be converted, please enter correct value", HttpStatus.BAD_REQUEST),
+    COURSE_IS_FULL(1017, "The course is full", HttpStatus.BAD_REQUEST)
     ;
 
     ErrorCode(int code, String message, HttpStatus status) {

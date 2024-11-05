@@ -4,6 +4,7 @@ import com.dongnv.courseregistrationmanagement.dto.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -55,5 +56,17 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .status(errorCode.getStatusCode())
                 .body(apiResponse);
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    ResponseEntity<ApiResponse<Void>> handlingDeserializeException(HttpMessageNotReadableException e) {
+        ErrorCode errorCode = ErrorCode.PARSE_ERROR;
+
+        return ResponseEntity
+                .status(errorCode.getStatusCode())
+                .body(ApiResponse.<Void>builder()
+                        .code(errorCode.getCode())
+                        .message(errorCode.getMessage())
+                        .build());
     }
 }

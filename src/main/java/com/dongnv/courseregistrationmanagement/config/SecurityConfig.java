@@ -25,7 +25,6 @@ import javax.crypto.spec.SecretKeySpec;
 
 @Configuration
 @EnableWebSecurity
-@RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class SecurityConfig {
 
@@ -35,6 +34,11 @@ public class SecurityConfig {
 
     JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     CustomAccessDeniedHandler customAccessDeniedHandler;
+
+    public SecurityConfig(JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint, CustomAccessDeniedHandler customAccessDeniedHandler) {
+        this.jwtAuthenticationEntryPoint = jwtAuthenticationEntryPoint;
+        this.customAccessDeniedHandler = customAccessDeniedHandler;
+    }
 
     String[] PUBLIC_ENDPOINTS = {
       "/auth/**",
@@ -46,7 +50,7 @@ public class SecurityConfig {
         httpSecurity
                 .authorizeHttpRequests(request -> request
                         .requestMatchers(HttpMethod.POST, PUBLIC_ENDPOINTS).permitAll()
-                        .requestMatchers("/courses/**").hasRole("ADMIN")
+                        .requestMatchers("/courses/*", "/courses/*/*").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 );
 
@@ -76,7 +80,7 @@ public class SecurityConfig {
     @Bean
     JwtAuthenticationConverter jwtAuthenticationConverter() {
         JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
-        jwtGrantedAuthoritiesConverter.setAuthorityPrefix("ROLE_");
+        jwtGrantedAuthoritiesConverter.setAuthorityPrefix("ROLE_");  // Add prefix "ROLE_" from claim scope in JWT
 
         JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
         jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(jwtGrantedAuthoritiesConverter);

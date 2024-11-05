@@ -10,5 +10,5 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class EnrollCourseResponse {
     boolean status;
-    String message;
+    String courseEnrolled;
 }

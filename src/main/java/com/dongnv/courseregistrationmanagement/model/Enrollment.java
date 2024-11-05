@@ -3,6 +3,7 @@ package com.dongnv.courseregistrationmanagement.model;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
@@ -24,5 +25,7 @@ public class Enrollment {
 
     @Column(name = "course_id", nullable = false)
     Long courseId;
+
+    @CreationTimestamp
     LocalDateTime enrollmentDate;
 }

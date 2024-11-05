@@ -86,6 +86,6 @@ public class AuthenticationService {
     }
 
     private String buildScope(User user) {
-        return user.getRole() == null ? "" : "ROLE_" + user.getRole().toString();
+        return user.getRole() == null ? "" : user.getRole().toString();
     }
 }
