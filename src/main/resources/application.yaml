@@ -20,3 +20,8 @@ app:
   account-admin:
     username: admin
     password: admin
+jwt:
+  signer-key: pEKWBDkFc9GHbPGrFK9S0Ao4ak5bQHx6FhzoMJv78cnqA5+8pHiAAq+cw3t1+454
+  issuer: DongBatTu
+  expired: 60 # minutes
+

@@ -7,6 +7,7 @@ import com.dongnv.courseregistrationmanagement.dto.response.UnenrollCourseRespon
 import com.dongnv.courseregistrationmanagement.exception.AppException;
 import com.dongnv.courseregistrationmanagement.exception.ErrorCode;
 import com.dongnv.courseregistrationmanagement.model.Course;
+import com.dongnv.courseregistrationmanagement.model.Enrollment;
 import com.dongnv.courseregistrationmanagement.repository.CourseRepository;
 import com.dongnv.courseregistrationmanagement.repository.EnrollmentRepository;
 import lombok.AccessLevel;
@@ -35,5 +36,14 @@ public class EnrollmentService {
                 () -> new AppException(ErrorCode.COURSE_NOT_FOUND)
         );
         return null;
+    }
+
+    public void test(EnrollCourseRequest request) {
+        Enrollment e = Enrollment.builder()
+                .courseId(request.getCourseId())
+                .userId(88L)
+                .build();
+        enrollmentRepository.save(e);
+
     }
 }

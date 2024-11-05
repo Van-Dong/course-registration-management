@@ -20,7 +20,10 @@ public enum ErrorCode {
     INVALID_MAX_ENROLLMENTS(1008, "Max enrollments must be in [1, 100]", HttpStatus.BAD_REQUEST),
     START_DATE_BLANK(1009, "Start cannot left blank", HttpStatus.BAD_REQUEST),
     COURSE_NOT_FOUND(1010, "Course not found", HttpStatus.BAD_REQUEST),
-    COURSE_ID_NULL(1011, "Course ID must not be null", HttpStatus.BAD_REQUEST)
+    COURSE_ID_NULL(1011, "Course ID must not be null", HttpStatus.BAD_REQUEST),
+    AUTHENTICATION_FAILED(1012, "Email or password is not correct", HttpStatus.BAD_REQUEST),
+    UNAUTHENTICATED(1013, "Unauthenticated", HttpStatus.UNAUTHORIZED),
+    UNAUTHORIZED(1014, "Unauthorized", HttpStatus.FORBIDDEN),
     ;
 
     ErrorCode(int code, String message, HttpStatus status) {
