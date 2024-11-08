@@ -31,9 +31,7 @@ public class CourseService {
     }
 
     public CourseResponse createCourse(CourseCreationRequest request) {
-        log.info("CourseRequest: ", request);
         Course course = courseMapper.toCourse(request);
-        log.info("Course: ", course);
         course = courseRepository.save(course);
         return courseMapper.toCourseResponse(course);
     }
@@ -42,13 +40,8 @@ public class CourseService {
         Course course = courseRepository.findById(id).orElseThrow(
                 () -> new AppException(ErrorCode.COURSE_NOT_FOUND)
         );
-
-        log.info("Before update: ", course);
-        log.info("Requets update: ", request);
         courseMapper.updateCourse(course, request);
         course = courseRepository.save(course);
-
-        log.info("After update: ", course);
         return courseMapper.toCourseResponse(course);
     }
 

@@ -19,8 +19,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -35,19 +35,15 @@ public class EnrollmentService {
 
     @Transactional
     public EnrollCourseResponse enrollCourse(EnrollCourseRequest request) {
-        Course course = courseRepository.findById(request.getCourseId()).orElseThrow(
-                () -> new AppException(ErrorCode.COURSE_NOT_FOUND)
-        );
-
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Long id = Long.parseLong(authentication.getName());
-
+        Course course = getCourseAndCheckCondition(request.getCourseId());
+        Long id = getCurrentUserId();
         Enrollment enrollment = Enrollment.builder()
                 .userId(id)
                 .courseId(request.getCourseId())
                 .build();
-        Lock lock = locks.computeIfAbsent(course.getId(), key -> new ReentrantLock());
 
+        // Lock block have race conditional
+        Lock lock = locks.computeIfAbsent(course.getId(), key -> new ReentrantLock());
         lock.lock();
         saveEnrollment(course, enrollment);
         lock.unlock();
@@ -60,23 +56,39 @@ public class EnrollmentService {
 
     @Transactional
     public void unenrollCourse(UnenrollCourseRequest request) {
-        Course course = courseRepository.findById(request.getCourseId()).orElseThrow(
+        Course course = getCourseAndCheckCondition(request.getCourseId());
+        Long id = getCurrentUserId();
+
+        enrollmentRepository.deleteEnrollmentByUserIdAndCourseId(id, request.getCourseId());
+
+        course.setCurrentEnrollments(course.getCurrentEnrollments() - 1);
+        courseRepository.save(course);
+    }
+
+    private static Long getCurrentUserId() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return Long.parseLong(authentication.getName());
+    }
+
+    private Course getCourseAndCheckCondition(Long request) {
+        Course course = courseRepository.findById(request).orElseThrow(
                 () -> new AppException(ErrorCode.COURSE_NOT_FOUND)
         );
-
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Long id = Long.parseLong(authentication.getName());
-        enrollmentRepository.deleteEnrollmentByUserIdAndCourseId(id, request.getCourseId());
+        if (course.getStartDate().isBefore(LocalDate.now()))
+            throw new AppException(ErrorCode.COURSE_IS_STARTED);
+        return course;
     }
+
 
     private void saveEnrollment(Course course, Enrollment enrollment) {
         try {
             // Check course is full
-            int currentEnrollmentCount = enrollmentRepository.countEnrollmentOfCourse(course.getId());
-            if (currentEnrollmentCount >= course.getMaxEnrollments()) {
+            if (!courseRepository.currentEnrollmentsLessThanMaxEnrollmentsById(course.getId()))
                 throw new AppException(ErrorCode.COURSE_IS_FULL);
-            }
             enrollmentRepository.save(enrollment);
+
+            course.setCurrentEnrollments(course.getCurrentEnrollments() + 1);
+            courseRepository.save(course);
         } catch (DataIntegrityViolationException e) {
             throw new AppException(ErrorCode.ENROLLMENT_EXSITED);
         }

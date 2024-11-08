@@ -20,9 +20,20 @@ public class Course {
     String title;
     String description;
     Integer maxEnrollments;
+    Integer currentEnrollments;
     LocalDate startDate;
 
     @OneToMany
     @JoinColumn(name = "course_id")
     List<Enrollment> enrollments;
+
+    @PrePersist
+    void setDefaultValue() {
+        if (this.getCurrentEnrollments() == null) {
+            this.setCurrentEnrollments(0);
+        }
+        if (this.getDescription() == null) {
+            this.setDescription("");
+        }
+    }
 }

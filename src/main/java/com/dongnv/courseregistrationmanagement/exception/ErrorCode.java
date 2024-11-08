@@ -26,7 +26,8 @@ public enum ErrorCode {
     UNAUTHORIZED(1014, "Unauthorized", HttpStatus.FORBIDDEN),
     ENROLLMENT_EXSITED(1015, "Enrollment already exist", HttpStatus.BAD_REQUEST),
     PARSE_ERROR(1016, "Type cannot be converted, please enter correct value", HttpStatus.BAD_REQUEST),
-    COURSE_IS_FULL(1017, "The course is full", HttpStatus.BAD_REQUEST)
+    COURSE_IS_FULL(1017, "The course is full", HttpStatus.BAD_REQUEST),
+    COURSE_IS_STARTED(1018, "Course have already started", HttpStatus.BAD_REQUEST),
     ;
 
     ErrorCode(int code, String message, HttpStatus status) {

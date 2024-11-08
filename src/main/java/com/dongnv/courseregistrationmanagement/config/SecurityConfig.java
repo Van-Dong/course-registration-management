@@ -43,13 +43,14 @@ public class SecurityConfig {
     String[] PUBLIC_ENDPOINTS = {
       "/auth/**",
       "/users/register",
+            "/test"
     };
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers(HttpMethod.POST, PUBLIC_ENDPOINTS).permitAll()
+                        .requestMatchers(PUBLIC_ENDPOINTS).permitAll()
                         .requestMatchers("/courses/*", "/courses/*/*").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 );
