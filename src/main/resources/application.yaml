@@ -6,26 +6,29 @@ server:
 spring:
   application:
     name: course-registration-management
+
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/course_registration
+    jdbcUrl: jdbc:mysql://localhost:3306/course_registration
     username: root
-    password: dongnv
+    password: dong_nv
+
   jpa:
     hibernate:
       ddl-auto: update
     show-sql: true
     database-platform: org.hibernate.dialect.MySQLDialect
+
   batch:
+    jdbc:
+      initialize-schema: always
     job:
       enabled: false  # tắt việc job tự động chạy bằng JobLauncherApplicationRunner
     datasource:
-      url: jdbc:mysql://localhost:3306/batch_db
-      username: root
-      password: root
       driver-class-name: com.mysql.cj.jdbc.Driver
-    jdbc:
-      initialize-schema: always
+      jdbcUrl: jdbc:mysql://localhost:3306/batch_db
+      username: root
+      password: dong_nv
 
   mail:
     host: smtp.gmail.com
@@ -38,6 +41,10 @@ spring:
           auth: true
           starttls:
             enable: true
+  task:
+    scheduling:
+      pool:
+        size: 5
 app:
   account-admin:
     username: admin
@@ -45,6 +52,6 @@ app:
 jwt:
   signer-key: pEKWBDkFc9GHbPGrFK9S0Ao4ak5bQHx6FhzoMJv78cnqA5+8pHiAAq+cw3t1+454
   issuer: DongBatTu
-  expired: 60 # minutes
+  expired: 6000 # minutes
 
 

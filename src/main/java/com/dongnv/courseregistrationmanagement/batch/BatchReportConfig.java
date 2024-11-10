@@ -78,9 +78,9 @@ public class BatchReportConfig {
     }
 
     @Bean
-    public Step exportReportStep1(PlatformTransactionManager transactionManager) {
+    public Step exportReportStep1(PlatformTransactionManager batchTransactionManager) {
         return new StepBuilder("exportReportStep1", jobRepository)
-                .<CountEnrollmentInWeekResponse, CountEnrollmentInWeekResponse>chunk(100, transactionManager)
+                .<CountEnrollmentInWeekResponse, CountEnrollmentInWeekResponse>chunk(100, batchTransactionManager)
                 .reader(readerForExportReport())
                 .writer(writerForExportReport())
                 .build();

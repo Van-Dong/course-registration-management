@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class BatchJobScheduler {
-    JobLauncher jobLauncher;
+    JobLauncher customJobLauncher;
     Job exportReportJob;
 
     @Scheduled(cron = "0 0 12 ? * 6")
@@ -26,7 +26,7 @@ public class BatchJobScheduler {
             JobParameters jobParameters = new JobParametersBuilder()
                     .addLong("time", System.currentTimeMillis())
                     .toJobParameters();
-            jobLauncher.run(exportReportJob, jobParameters);
+            customJobLauncher.run(exportReportJob, jobParameters);
             log.info("Job Completed");
         } catch (JobExecutionException e) {
             throw new RuntimeException(e);

@@ -76,9 +76,9 @@ public class BatchSuggestCourseConfig {
     }
 
     @Bean
-    public Step sendSuggestedEmailStep1(PlatformTransactionManager transactionManager) {
+    public Step sendSuggestedEmailStep1(PlatformTransactionManager batchTransactionManager) {
         return new StepBuilder("sendSuggestedEmailStep1", jobRepository)
-                .<User, EmailContentDto>chunk(100, transactionManager)
+                .<User, EmailContentDto>chunk(100, batchTransactionManager)
                 .reader(readerForSendSuggestedEmail())
                 .processor(processorForSendSuggestedEmail())
                 .writer(writerForSendSuggestedEmail())
