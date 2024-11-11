@@ -12,6 +12,8 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,6 +30,19 @@ public class CourseService {
         return courseRepository.findAll().stream()
                 .map(courseMapper::toCourseResponse)
                 .toList();
+    }
+
+    public CourseResponse getCourseById(Long id) {
+        Course course = courseRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.COURSE_NOT_FOUND));
+        return courseMapper.toCourseResponse(course);
+    }
+
+    public List<CourseResponse> getCoursesByUserId() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Long userId = Long.parseLong(authentication.getName());
+
+        return courseRepository.findAllByUserId(userId).stream()
+                .map(courseMapper::toCourseResponse).toList();
     }
 
     public CourseResponse createCourse(CourseCreationRequest request) {

@@ -22,6 +22,8 @@ public class Course {
     Integer maxEnrollments;
     Integer currentEnrollments;
     LocalDate startDate;
+    String teacher;
+    Float duration; // Hours
 
     @OneToMany
     @JoinColumn(name = "course_id")

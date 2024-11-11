@@ -35,7 +35,7 @@ public class PrimaryDataSourceConfig {  // Database for entity (Course, Enrollme
             @Qualifier("primaryDataSource") DataSource dataSource) {
         LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
         em.setDataSource(dataSource);
-        em.setPackagesToScan(new String[] { "com.dongnv.courseregistrationmanagement.model" });
+        em.setPackagesToScan("com.dongnv.courseregistrationmanagement.model");
 
         HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
         em.setJpaVendorAdapter(vendorAdapter);

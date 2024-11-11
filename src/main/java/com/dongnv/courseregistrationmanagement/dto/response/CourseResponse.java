@@ -15,5 +15,8 @@ public class CourseResponse {
     String title;
     String description;
     Integer maxEnrollments;
+    Integer currentEnrollments;
     LocalDate startDate;
+    String teacher;
+    Float duration;
 }

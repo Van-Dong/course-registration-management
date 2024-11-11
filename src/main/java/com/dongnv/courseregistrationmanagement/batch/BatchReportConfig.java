@@ -88,7 +88,7 @@ public class BatchReportConfig {
 
     @Bean
     public Job exportReportJob(Step exportReportStep1) {
-        return new JobBuilder("exportReportJob", jobRepository)
+        return new JobBuilder("exportReportJob1", jobRepository)
                 .start(exportReportStep1)
                 .listener(new JobCompletionNotificationListener())
                 .build();

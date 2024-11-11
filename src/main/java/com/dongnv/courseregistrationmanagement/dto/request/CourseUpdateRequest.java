@@ -19,4 +19,6 @@ public class CourseUpdateRequest {
     String description;
     Integer maxEnrollments;
     LocalDate startDate;
+    String teacher;
+    Float duration;
 }

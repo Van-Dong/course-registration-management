@@ -9,15 +9,18 @@ import com.dongnv.courseregistrationmanagement.model.Course;
 import com.dongnv.courseregistrationmanagement.model.Enrollment;
 import com.dongnv.courseregistrationmanagement.repository.CourseRepository;
 import com.dongnv.courseregistrationmanagement.repository.EnrollmentRepository;
-import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.concurrent.ConcurrentHashMap;
@@ -32,8 +35,8 @@ public class EnrollmentService {
     EnrollmentRepository enrollmentRepository;
     CourseRepository courseRepository;
     ConcurrentHashMap<Long, Lock> locks = new ConcurrentHashMap<>();
-
-    @Transactional
+    
+    @Transactional(transactionManager = "primaryTransactionManager")
     public EnrollCourseResponse enrollCourse(EnrollCourseRequest request) {
         Course course = getCourseAndCheckCondition(request.getCourseId());
         Long id = getCurrentUserId();
@@ -65,6 +68,8 @@ public class EnrollmentService {
         courseRepository.save(course);
     }
 
+
+
     private static Long getCurrentUserId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return Long.parseLong(authentication.getName());
@@ -90,7 +95,7 @@ public class EnrollmentService {
             course.setCurrentEnrollments(course.getCurrentEnrollments() + 1);
             courseRepository.save(course);
         } catch (DataIntegrityViolationException e) {
-            throw new AppException(ErrorCode.ENROLLMENT_EXSITED);
+            throw new AppException(ErrorCode.ENROLLMENT_EXISTED);
         }
     }
 }

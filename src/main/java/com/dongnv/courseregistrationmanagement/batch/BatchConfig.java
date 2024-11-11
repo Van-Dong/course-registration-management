@@ -20,6 +20,10 @@ import org.springframework.jdbc.datasource.init.DatabasePopulator;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 
 import javax.sql.DataSource;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 @Configuration
 @EnableBatchProcessing(dataSourceRef = "batchDataSource", transactionManagerRef = "batchTransactionManager")
@@ -44,10 +48,11 @@ public class BatchConfig {
     public DataSourceInitializer batchDataSourceInitializer(DataSource batchDataSource) {
         DataSourceInitializer initializer = new DataSourceInitializer();
         initializer.setDataSource(batchDataSource);
-
-        if ("always".equals(initializeSchema) || "embedded".equals(initializeSchema)) {
-            Resource schemaResource = new ClassPathResource("org/springframework/batch/core/schema-mysql.sql");
-            initializer.setDatabasePopulator(databasePopulator(schemaResource));
+        if (!isSchemaInitialized(batchDataSource)) {
+            if ("always".equals(initializeSchema) || "embedded".equals(initializeSchema)) {
+                Resource schemaResource = new ClassPathResource("org/springframework/batch/core/schema-mysql.sql");
+                initializer.setDatabasePopulator(databasePopulator(schemaResource));
+            }
         }
 
         return initializer;
@@ -57,6 +62,20 @@ public class BatchConfig {
         ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
         populator.addScript(schemaResource);
         return populator;
+    }
+    private boolean isSchemaInitialized(DataSource dataSource) {
+        try (Connection connection = dataSource.getConnection()) {
+            // Kiểm tra sự tồn tại của bảng mà bạn muốn kiểm tra (ví dụ: BATCH_JOB_INSTANCE)
+            String sql = "SELECT COUNT(*) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'BATCH_JOB_INSTANCE'";
+            try (Statement stmt = connection.createStatement(); ResultSet rs = stmt.executeQuery(sql)) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;  // Trả về true nếu bảng đã tồn tại
+                }
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace(); // Xử lý lỗi nếu có
+        }
+        return false;  // Trả về false nếu không thể kiểm tra
     }
 
     @Bean

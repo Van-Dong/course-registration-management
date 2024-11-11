@@ -7,13 +7,13 @@ import com.dongnv.courseregistrationmanagement.exception.AppException;
 import com.dongnv.courseregistrationmanagement.exception.ErrorCode;
 import com.dongnv.courseregistrationmanagement.model.User;
 import com.dongnv.courseregistrationmanagement.repository.UserRepository;
-import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -23,7 +23,7 @@ public class UserService {
     UserMapper userMapper;
     PasswordEncoder passwordEncoder;
 
-    @Transactional
+    @Transactional(transactionManager = "primaryTransactionManager")
     public UserResponse createUser(UserCreationRequest request) {
         User user = userMapper.toUser(request);
         user.setPassword(passwordEncoder.encode(user.getPassword()));

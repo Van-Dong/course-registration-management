@@ -10,6 +10,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Repository
 public interface CourseRepository extends JpaRepository<Course, Long> {
@@ -27,4 +28,7 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
 
     @Query("SELECT c.currentEnrollments < c.maxEnrollments FROM Course c WHERE c.id = :id")
     boolean currentEnrollmentsLessThanMaxEnrollmentsById(@Param("id") Long id);
+
+    @Query("SELECT c FROM Course c JOIN Enrollment e ON c.id = e.courseId WHERE e.userId = :userId ORDER BY e.enrollmentDate DESC")
+    List<Course> findAllByUserId(@Param("userId") Long userId);
 }

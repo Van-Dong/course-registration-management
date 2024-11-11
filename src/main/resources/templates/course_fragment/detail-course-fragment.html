@@ -1,0 +1,36 @@
+<!-- Content -->
+<div class="mx-4" style="min-height: 80vh;">
+    <div class="container mt-5" th:object="${course}">
+        <!-- Course Title -->
+        <div class="text-center mb-4">
+            <h2 class="fw-bold">Course: <span id="courseTitle text-primary" th:text="*{title}">Course Title</span></h2>
+        </div>
+
+        <!-- Course Details Card -->
+        <div class="card shadow-lg">
+            <div class="card-body">
+                <h5 class="card-title fw-normal fst-italic">Course Details</h5>
+
+                <!-- Description -->
+                <p class="card-text mb-2"><strong>Description:</strong> <span id="courseDescription" th:text="*{description}">[Course Description]</span></p>
+                <p class="mb-2"><strong>Current Enrollment:</strong> <span id="currentEnrollment" th:text="|*{currentEnrollments} / *{maxEnrollments}|">[Current Enrollment]</span></p>
+
+                <!-- Start Date -->
+                <p class="mb-2"><strong>Start Date:</strong> <span id="startDate" th:text="*{startDate}"></span></p>
+
+                <!-- Teacher -->
+                <p class="mb-2"><strong>Teacher:</strong> <span id="teacher" th:text="*{teacher}">Nguyen Van Dong</span></p>
+
+                <!-- Duration -->
+                <p class="mb-2"><strong>Duration:</strong> <span id="duration" th:text="|*{duration} hours|">9999 hours</span></p>
+            </div>
+        </div>
+
+        <!-- Enrollment and Unenrollment Buttons -->
+        <div class="text-center mt-4">
+            <button id="enrollBtn" class="btn btn-success me-2">Enroll</button>
+            <button id="unenrollBtn" class="btn btn-danger">Unenroll</button>
+        </div>
+    </div>
+
+</div>
