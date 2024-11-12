@@ -32,7 +32,7 @@
                 </tr>
                 </thead>
                 <tbody class="table-group-divider">
-                <tr th:each="course, iterStat : ${courses}" th:object="${course}">
+                <tr th:each="course, iterStat : ${courses.data}" th:object="${course}">
                     <th scope="row" th:text="${iterStat.count}">
                         1
                     </th>
@@ -41,8 +41,8 @@
                         th:text="*{description}"
                         th:title="*{description}" >
                     </td>
-                    <td th:text="|*{currentEnrollments}/*{maxEnrollments}|">
-                        0/0
+                    <td>
+                        <a th:href="@{/enrollments/{courseId}(courseId=${course.id})}" th:text="|*{currentEnrollments}/*{maxEnrollments}|">0/0</a>
                     </td>
                     <td th:text="*{startDate}"></td>
                     <td th:text="*{teacher}"></td>
@@ -65,11 +65,6 @@
                         >
                             Update
                         </button>
-<!--                        <button-->
-<!--                                th:onclick="|deleteEvaluationById(${evaluation.id})|"-->
-<!--                                type="button"-->
-<!--                                class="btn btn-danger"-->
-<!--                        >-->
                         <button type="button" class="btn btn-danger btn-delete-course"
                                 data-bs-toggle="modal"
                                 data-bs-target="#modal_delete_course"
@@ -82,51 +77,41 @@
                 </tbody>
             </table>
 
-            <!-- Pagination-->
-<!--            <nav aria-label="Page navigation">-->
-<!--                <ul class="pagination">-->
-<!--                    <li-->
-<!--                            class="page-item"-->
-<!--                            th:class="${evaluationPage.hasPrevious() ? '' : 'disabled'}"-->
-<!--                    >-->
-<!--                        <a-->
-<!--                                class="page-link"-->
-<!--                                th:href="@{/evaluation(page=${evaluationPage.number - 1})}"-->
-<!--                                th:if="${evaluationPage.hasPrevious()}"-->
-<!--                                th:text="#{pagination.previous}"-->
-<!--                        >Previous</a-->
-<!--                        >-->
-<!--                    </li>-->
+            <!--Pagination-->
+            <nav aria-label="Page navigation">
+                <ul class="pagination">
+                    <li class="page-item" >
+                        <a
+                                class="page-link"
+                                th:href="@{/courses/manager(page=${courses.currentPage - 1})}"
+                                th:if="${courses.currentPage > 1}"
+                        >Previous</a>
+                    </li>
 
-<!--                    <li-->
-<!--                            class="page-item"-->
-<!--                            th:if="${evaluationPage.totalPages > 0}"-->
-<!--                            th:each="i : ${#numbers.sequence(0, evaluationPage.totalPages - 1)}"-->
-<!--                            th:class="${i == evaluationPage.number ? 'active' : ''}"-->
-<!--                    >-->
-<!--                        <a-->
-<!--                                class="page-link"-->
-<!--                                th:href="@{/evaluation(page=${i})}"-->
-<!--                                th:text="${i + 1}"-->
-<!--                        >1</a-->
-<!--                        >-->
-<!--                    </li>-->
+                    <li
+                            class="page-item"
+                            th:class="${i == courses.currentPage ? 'active' : ''}"
+                            th:each="i : ${#numbers.sequence(1, courses.totalPages)}"
+                            th:if="${courses.totalPages > 0}"
+                    >
+                        <a
+                                class="page-link"
+                                th:href="@{/courses/manager(page=${i})}"
+                                th:text="${i}"
+                        >1</a>
+                    </li>
 
-<!--                    <li-->
-<!--                            class="page-item"-->
-<!--                            th:class="${evaluationPage.hasNext() ? '' : 'disabled'}"-->
-<!--                    >-->
-<!--                        <a-->
-<!--                                class="page-link"-->
-<!--                                th:href="@{/evaluation(page=${evaluationPage.number + 1})}"-->
-<!--                                th:if="${evaluationPage.hasNext()}"-->
-<!--                                th:text="#{pagination.next}"-->
-<!--                        >Next</a-->
-<!--                        >-->
-<!--                    </li>-->
-<!--                </ul>-->
-<!--            </nav>-->
-<!--        -->
+                    <li class="page-item">
+
+                        <a
+                                class="page-link"
+                                th:href="@{/courses/manager(page=${courses.currentPage + 1})}"
+                                th:if="${courses.currentPage < courses.totalPages}"
+                        >Next</a
+                        >
+                    </li>
+                </ul>
+            </nav>
         </div>
     </div>
 </div>

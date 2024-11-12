@@ -1,17 +1,23 @@
 package com.dongnv.courseregistrationmanagement.service;
 
+import com.dongnv.courseregistrationmanagement.dto.PageResponse;
 import com.dongnv.courseregistrationmanagement.dto.mapper.CourseMapper;
 import com.dongnv.courseregistrationmanagement.dto.request.CourseCreationRequest;
 import com.dongnv.courseregistrationmanagement.dto.request.CourseUpdateRequest;
 import com.dongnv.courseregistrationmanagement.dto.response.CourseResponse;
+import com.dongnv.courseregistrationmanagement.dto.response.StudentInCourseResponse;
 import com.dongnv.courseregistrationmanagement.exception.AppException;
 import com.dongnv.courseregistrationmanagement.exception.ErrorCode;
 import com.dongnv.courseregistrationmanagement.model.Course;
+import com.dongnv.courseregistrationmanagement.model.User;
 import com.dongnv.courseregistrationmanagement.repository.CourseRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -26,10 +32,15 @@ public class CourseService {
     CourseRepository courseRepository;
     CourseMapper courseMapper;
 
-    public List<CourseResponse> getCourses() {
-        return courseRepository.findAll().stream()
-                .map(courseMapper::toCourseResponse)
-                .toList();
+    public PageResponse<CourseResponse> getCourses(int page, int size) {
+        Page<Course> courses = courseRepository.findAll(PageRequest.of(page - 1, size));
+        return PageResponse.<CourseResponse>builder()
+                .currentPage(page)
+                .totalPages(courses.getTotalPages())
+                .pageSize(courses.getSize())
+                .totalElements(courses.getTotalElements())
+                .data(courses.getContent().stream().map(courseMapper::toCourseResponse).toList())
+                .build();
     }
 
     public CourseResponse getCourseById(Long id) {
@@ -37,12 +48,18 @@ public class CourseService {
         return courseMapper.toCourseResponse(course);
     }
 
-    public List<CourseResponse> getCoursesByUserId() {
+    public PageResponse<CourseResponse> getMyCourses(int page, int size) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = Long.parseLong(authentication.getName());
 
-        return courseRepository.findAllByUserId(userId).stream()
-                .map(courseMapper::toCourseResponse).toList();
+        Page<Course> coursePage = courseRepository.findAllByUserId(userId, PageRequest.of(page - 1, size));
+        return PageResponse.<CourseResponse>builder()
+                .currentPage(page)
+                .totalPages(coursePage.getTotalPages())
+                .pageSize(coursePage.getSize())
+                .totalElements(coursePage.getTotalElements())
+                .data(coursePage.getContent().stream().map(courseMapper::toCourseResponse).toList())
+                .build();
     }
 
     public CourseResponse createCourse(CourseCreationRequest request) {

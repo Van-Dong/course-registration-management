@@ -3,6 +3,7 @@ package com.dongnv.courseregistrationmanagement.controller;
 import com.dongnv.courseregistrationmanagement.dto.projection.UserProjection;
 import com.dongnv.courseregistrationmanagement.repository.CourseRepository;
 import com.dongnv.courseregistrationmanagement.repository.EnrollmentRepository;
+import com.dongnv.courseregistrationmanagement.service.ReportService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -23,10 +24,8 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class TestController {
-    CourseRepository courseRepository;
-    EnrollmentRepository enrollmentRepository;
     JobLauncher customJobLauncher;
-    Job exportReportJob;
+    ReportService reportService;
 
     Job sendSuggestedEmailJob;
     @GetMapping("/runBatchJob")
@@ -45,14 +44,7 @@ public class TestController {
 
     @GetMapping("/test")
     public String test() {
-        LocalDate today = LocalDate.now();
-        LocalDateTime startOfWeek = today.with(DayOfWeek.MONDAY).atStartOfDay();
-        LocalDateTime endOfWeek = today.with(DayOfWeek.SUNDAY).atTime(23, 59, 59);
-        Page<UserProjection> result =
-                enrollmentRepository.findUserNotEnrolledInCourse(7L, PageRequest.of(0, 50));
-        result.getContent().forEach(user -> {
-            log.info("User: {} + {}", user.getFullName(), user.getEmail());
-        });
+        log.info("TEST TEST TEST: {}", reportService.getWeeks());
 
         return "Test Successfully";
     }

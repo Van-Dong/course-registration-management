@@ -174,10 +174,16 @@
                 }),
                 success: function(response) {
                     createToast("info", "Login successfully");
-                    console.log(response)
+                    // console.log(response)
+
+                    // Save jwt Cookie
                     var expiryDate = new Date();
-                    expiryDate.setMinutes(expiryDate.getMinutes() + 15);
+                    expiryDate.setMinutes(expiryDate.getMinutes() + 60);
                     document.cookie =`access_token=${response.result.access_token}; expires=${expiryDate.toUTCString()}; path=/`;
+
+                    setTimeout(function () {
+                        window.location.href = "/courses/all";
+                    }, 1500);
                 },
                 error: function(xhr, status, error) {
                     // Xử lý khi có lỗi

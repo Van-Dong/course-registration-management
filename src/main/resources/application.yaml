@@ -56,5 +56,6 @@ jwt:
   signer-key: pEKWBDkFc9GHbPGrFK9S0Ao4ak5bQHx6FhzoMJv78cnqA5+8pHiAAq+cw3t1+454
   issuer: DongBatTu
   expired: 6000 # minutes
+  cookie-name: access_token
 
 

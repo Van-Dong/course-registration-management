@@ -28,9 +28,92 @@
 
         <!-- Enrollment and Unenrollment Buttons -->
         <div class="text-center mt-4">
-            <button id="enrollBtn" class="btn btn-success me-2">Enroll</button>
-            <button id="unenrollBtn" class="btn btn-danger">Unenroll</button>
+            <button id="enrollBtn" class="btn btn-success me-2" th:data-id="*{id}" th:disabled="${isEnroll}">Enroll</button>
+            <button id="unenrollBtn" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#modal_unenroll_course" th:disabled="${!isEnroll}">Unenroll</button>
         </div>
     </div>
 
 </div>
+
+<!-- Confirm Enenroll Course -->
+<div class="modal fade" id="modal_unenroll_course">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header text-bg-danger">
+                <h4 class="modal-title">Confirm Unenroll Course</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+                <p>Are you sure you want cancel this course enrollment?</p>
+            </div>
+
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal" id="btn_submit_unenroll_course" th:data-id="*{id}">Unenroll</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function toggleBtnDisabled() {
+        $('#enrollBtn').prop('disabled', function(i, val) {
+            return !val;
+        });
+
+        $('#unenrollBtn').prop('disabled', function(i, val) {
+            return !val;
+        });
+    }
+    $(document).ready(function () {
+
+        // Start Enroll Course
+        $("#enrollBtn").click(function () {
+            let id = $(this).data('id');
+            $.post({
+                url: "/enrollments/create",
+                contentType: "application/json",
+                data: JSON.stringify({
+                    courseId: id
+                }),
+                success: function(response) {
+                    createToast("info", "Enroll course successfully");
+                    console.log(response);
+                    toggleBtnDisabled();
+                },
+                error: function(xhr, status, error) {
+                    // Xử lý khi có lỗi
+                    createToast("danger", xhr.responseJSON.message)
+                    console.log("Error:", xhr);
+                }
+            });
+        })
+        // End Enroll Course
+
+        // Start Unenroll Course
+        $("#btn_submit_unenroll_course").click(function () {
+            let id = $(this).data('id');
+            $.ajax({
+                url: "/enrollments/delete",
+                contentType: "application/json",
+                type: "DELETE",
+                data: JSON.stringify({
+                    courseId: id
+                }),
+                success: function(response) {
+                    createToast("info", "Unenroll course successfully");
+                    console.log(response);
+                    toggleBtnDisabled();
+                },
+                error: function(xhr, status, error) {
+                    // Xử lý khi có lỗi
+                    createToast("danger", xhr.responseJSON.message)
+                    console.log("Error:", xhr);
+                }
+            });
+        })
+        // End Unenroll Course
+    })
+</script>

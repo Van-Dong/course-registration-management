@@ -1,0 +1,87 @@
+<!-- Content -->
+<div class="mx-4" style="min-height: 80vh;">
+    <div class="container mt-5" th:object="${course}">
+        <!-- Course Title -->
+        <div class="text-center mb-4">
+            <h2 class="fw-bold">Report</h2>
+            <!-- Select week -->
+            <div class="p-2 text-center">
+                <label for="weekSelect" class="mb-1 mr-2">Week: </label>
+                <select class="form-select" id="weekSelect" name="weekSelect" style="max-width: 300px; display: inline-block;">
+                    <option class="option-select-week" th:each="week, iterStat : ${weeks}" th:value="${iterStat.index}"
+                            th:text="${week}" th:selected="${weekAgo == iterStat.index}">
+                    </option>
+                </select>
+                <a href="/report/export?weekAgo=0" th:href="@{/report/export(weekAgo=${weekAgo})}"
+                   class="btn btn-success ms-3 btn-export"
+                   th:classappend="${weekAgo == 0} ? 'disabled' : ''">Export</a>
+            </div>
+        </div>
+
+
+        <!-- Course Details Card -->
+                <table class="table table-striped table-bordered text-nowrap table-hover">
+                    <thead class="text-bg-success">
+                    <tr>
+                        <th scope="col">STT</th>
+                        <th scope="col">Title</th>
+                        <th scope="col">Count Enrollment in Week</th>
+                        <th scope="col">Current Enrollment</th>
+                    </tr>
+                    </thead>
+                    <tbody class="table-group-divider">
+                    <tr th:each="course, iterStat : ${reportCountEnrollment.getData()}" th:object="${course}">
+                        <th scope="row" th:text="${iterStat.count}">1</th>
+                        <td><a th:text="*{title}" th:href="@{/courses/detail/{courseId}(courseId=${course.id})}">Khoa hoc spring boot nang cao 1</a></td>
+                        <td th:text="*{countEnrollmentInWeek}">1</td>
+                        <td th:text="|*{currentEnrollments}/*{maxEnrollments}|">0/50</td>
+                    </tr>
+                    </tbody>
+                </table>
+
+            <!--Pagination-->
+            <nav aria-label="Page navigation">
+                <ul class="pagination" th:with="courses=${reportCountEnrollment}">
+                    <li class="page-item" >
+                        <a
+                                class="page-link"
+                                th:href="@{/report(weekAgo=${weekAgo}, page=${courses.currentPage - 1})}"
+                                th:if="${courses.currentPage > 1}"
+                        >Previous</a>
+                    </li>
+
+                    <li
+                            class="page-item"
+                            th:class="${i == courses.currentPage ? 'active' : ''}"
+                            th:each="i : ${#numbers.sequence(1, courses.totalPages)}"
+                            th:if="${courses.totalPages > 0}"
+                    >
+                        <a
+                                class="page-link"
+                                th:href="@{/report(weekAgo=${weekAgo}, page=${i})}"
+                                th:text="${i}"
+                        >1</a>
+                    </li>
+
+                    <li class="page-item">
+
+                        <a
+                                class="page-link"
+                                th:href="@{/report(weekAgo=${weekAgo}, page=${courses.currentPage + 1})}"
+                                th:if="${courses.currentPage < courses.totalPages}"
+                        >Next</a
+                        >
+                    </li>
+                </ul>
+            </nav>
+    </div>
+
+</div>
+
+<script>
+    $(document).ready(function () {
+        $('#weekSelect').change(function () {
+            window.location.href = `/report?weekAgo=${$(this).val()}`;
+        })
+    })
+</script>

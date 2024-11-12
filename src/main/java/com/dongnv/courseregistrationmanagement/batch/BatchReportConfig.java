@@ -35,7 +35,7 @@ public class BatchReportConfig {
 
     @Bean
     public ItemReader<CountEnrollmentInWeekResponse> readerForExportReport() {
-        LocalDate today = LocalDate.now();
+        LocalDate today = LocalDate.now().minusDays(1);  // run in 3:00 AM Monday
         LocalDateTime startOfWeek = today.with(DayOfWeek.MONDAY).atStartOfDay();
         LocalDateTime endOfWeek = today.with(DayOfWeek.SUNDAY).atTime(23, 59, 59);
 
@@ -70,7 +70,7 @@ public class BatchReportConfig {
     @Bean
     public ItemWriter<CountEnrollmentInWeekResponse> writerForExportReport() {
         FlatFileItemWriter<CountEnrollmentInWeekResponse> writer = new FlatFileItemWriter<>();
-        writer.setResource(new FileSystemResource("report_" + LocalDate.now() + ".csv"));
+        writer.setResource(new FileSystemResource("report/" + LocalDate.now().minusDays(1) + ".csv"));
         // Thêm header vào file CSV
         writer.setHeaderCallback(writer1 -> writer1.write("id, title, countEnrollmentInWeek, currentEnrollment"));
         writer.setLineAggregator(lineAggregator());

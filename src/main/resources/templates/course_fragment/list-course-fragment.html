@@ -7,7 +7,7 @@
 
     <!-- Main content -->
     <div class="row">
-        <div th:each="course,iterStat : ${courses}" class="col-sm-6 col-md-4 col-lg-4 col-xl-3 col-xxl-3 my-3">
+        <div th:each="course,iterStat : ${courses.data}" class="col-sm-6 col-md-4 col-lg-4 col-xl-3 col-xxl-3 my-3">
             <div class="card shadow-sm">
                 <!-- Card header -->
                 <div class="card-header bg-white fs-6">
@@ -31,13 +31,18 @@
                     <span class="card-text card-box-text">
               <i>Number of students:</i>
                         <span th:text="${course.maxEnrollments}">50</span>
-            </span>
-                    <br />
+            </span> <br />
 
-                    <!-- Start Date -->
-                    <span class="card-text card-box-text">
-              <i>Start Date:</i>
-              <small class="badge bg-secondary" th:text="${course.startDate}">10-11-2024</small>
+<!--                    &lt;!&ndash; Start Date &ndash;&gt;-->
+<!--                    <span class="card-text card-box-text">-->
+<!--              <i>Start Date:</i>-->
+<!--              <small class="badge bg-secondary" th:text="${course.startDate}">10-11-2024</small>-->
+<!--            </span>-->
+              <!-- Status -->
+            <span class="card-text card-box-text">
+              <i>Status:</i>
+              <small class="badge bg-success" th:if="${course.currentEnrollments < course.maxEnrollments}">Available</small>
+              <small class="badge bg-danger" th:unless="${course.currentEnrollments < course.maxEnrollments}">Full</small>
             </span>
                     <br />
 
@@ -49,47 +54,42 @@
             </div>
         </div>
 
-<!--        Example -->
-<!--        <div class="col-sm-6 col-md-4 col-lg-4 col-xl-3 col-xxl-3 my-3">-->
-<!--            <div class="card shadow-sm">-->
-<!--                &lt;!&ndash; Card header &ndash;&gt;-->
-<!--                <div class="card-header bg-white fs-6">-->
-<!--                    <div class="btn-group-for-client text-center" role="group">-->
-<!--                        <h6 class="card-text card-box-text text-decoration-underline p-2">-->
-<!--                            Khoá học spring boot 3 cơ bản-->
-<!--                        </h6>-->
-<!--                    </div>-->
-<!--                </div>-->
+        <!--Pagination-->
+        <nav aria-label="Page navigation">
+            <ul class="pagination">
+                <li class="page-item" >
+                    <a
+                            class="page-link"
+                            th:href="@{/courses/all(page=${courses.currentPage - 1})}"
+                            th:if="${courses.currentPage > 1}"
+                    >Previous</a>
+                </li>
 
-<!--                &lt;!&ndash; Card body &ndash;&gt;-->
-<!--                <div class="card-body">-->
-<!--                    &lt;!&ndash; Description &ndash;&gt;-->
-<!--                    <span class="card-text card-box-text">-->
-<!--              <i>Description:</i>-->
-<!--              Khóa học dạy ta những thế cơ bản về spring boot, về api rest, và về nhiều thứ khác nữa-->
-<!--            </span>-->
-<!--                    <br />-->
+                <li
+                        class="page-item"
+                        th:class="${i == courses.currentPage ? 'active' : ''}"
+                        th:each="i : ${#numbers.sequence(1, courses.totalPages)}"
+                        th:if="${courses.totalPages > 0}"
+                >
+                    <a
+                            class="page-link"
+                            th:href="@{/courses/all(page=${i})}"
+                            th:text="${i}"
+                    >1</a>
+                </li>
 
-<!--                    &lt;!&ndash; Number of students &ndash;&gt;-->
-<!--                    <span class="card-text card-box-text">-->
-<!--              <i>Number of students:</i>-->
-<!--            </span>-->
-<!--                    <br />-->
+                <li class="page-item">
 
-<!--                    &lt;!&ndash; Start Date &ndash;&gt;-->
-<!--                    <span class="card-text card-box-text">-->
-<!--              <i>Start Date:</i>-->
-<!--              <small class="badge bg-secondary">10-11-2024</small>-->
-<!--            </span>-->
-<!--                    <br />-->
-
-<!--                    &lt;!&ndash; Detail button &ndash;&gt;-->
-<!--                    <div>-->
-<!--                        <a href="#" class="btn btn-outline-primary py-1 px-2 mt-1">Detail</a>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--            </div>-->
-<!--        </div>-->
+                    <a
+                            class="page-link"
+                            th:href="@{/courses/all(page=${courses.currentPage + 1})}"
+                            th:if="${courses.currentPage < courses.totalPages}"
+                    >Next</a
+                    >
+                </li>
+            </ul>
+        </nav>
+        </nav>
     </div>
 
 </div>

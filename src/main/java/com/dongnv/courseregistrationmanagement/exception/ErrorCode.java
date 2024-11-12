@@ -32,6 +32,7 @@ public enum ErrorCode {
     INVALID_DURATION(1020, "DURATION must be in [0.5, 100]", HttpStatus.BAD_REQUEST),
     EMAIL_REQUIRED(1021, "Email is required", HttpStatus.BAD_REQUEST),
     PASSWORD_REQUIRED(1022, "Password is required", HttpStatus.BAD_REQUEST),
+    NO_RESOURCE_FOUND(1023, "404 not found", HttpStatus.BAD_REQUEST),
     ;
 
     ErrorCode(int code, String message, HttpStatus status) {

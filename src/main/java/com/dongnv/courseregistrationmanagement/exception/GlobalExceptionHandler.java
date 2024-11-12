@@ -3,11 +3,14 @@ package com.dongnv.courseregistrationmanagement.exception;
 import com.dongnv.courseregistrationmanagement.dto.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 @Slf4j
 @ControllerAdvice
@@ -61,6 +64,18 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(HttpMessageNotReadableException.class)
     ResponseEntity<ApiResponse<Void>> handlingDeserializeException(HttpMessageNotReadableException e) {
         ErrorCode errorCode = ErrorCode.PARSE_ERROR;
+
+        return ResponseEntity
+                .status(errorCode.getStatusCode())
+                .body(ApiResponse.<Void>builder()
+                        .code(errorCode.getCode())
+                        .message(errorCode.getMessage())
+                        .build());
+    }
+
+    @ExceptionHandler(NoResourceFoundException.class)
+    ResponseEntity<ApiResponse<Void>> handlingNoResourceFoundException(NoResourceFoundException e) {
+        ErrorCode errorCode = ErrorCode.NO_RESOURCE_FOUND;
 
         return ResponseEntity
                 .status(errorCode.getStatusCode())

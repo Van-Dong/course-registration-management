@@ -16,9 +16,10 @@ import org.springframework.stereotype.Component;
 public class BatchJobScheduler {
     JobLauncher customJobLauncher;
     Job exportReportJob;
+    Job sendSuggestedEmailJob;
 
-    @Scheduled(cron = "0 0 12 ? * 6")
-    public void runBatchJob() {
+    @Scheduled(cron = "0 0 3 ? * 1")
+    public void runExportReportBatchJob() {
         try {
             JobParameters jobParameters = new JobParametersBuilder()
                     .addLong("time", System.currentTimeMillis())
@@ -26,7 +27,20 @@ public class BatchJobScheduler {
             customJobLauncher.run(exportReportJob, jobParameters);
             log.info("Job Completed");
         } catch (JobExecutionException e) {
-            throw new RuntimeException(e);
+            log.info("JobExecutionException: ", e);
+        }
+    }
+
+    @Scheduled(cron = "0 0 3 ? * 1")
+    public void runSuggestedCourseBatchJob() {
+        try {
+            JobParameters jobParameters = new JobParametersBuilder()
+                    .addLong("time", System.currentTimeMillis())
+                    .toJobParameters();
+            customJobLauncher.run(sendSuggestedEmailJob, jobParameters);
+            log.info("Job Completed");
+        } catch (JobExecutionException e) {
+            log.info("JobExecutionException: ", e);
         }
     }
 }

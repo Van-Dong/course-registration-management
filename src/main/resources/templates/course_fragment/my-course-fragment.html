@@ -20,7 +20,7 @@
                 </tr>
                 </thead>
                 <tbody class="table-group-divider">
-                <tr th:each="course, iterStat : ${courses}" th:object="${course}">
+                <tr th:each="course, iterStat : ${courses.getData()}" th:object="${course}">
                     <th scope="row" th:text="${iterStat.count}">1</th>
                     <td th:text="*{title}">Khoa hoc spring boot nang cao 1</td>
                     <td th:text="|*{currentEnrollments}/*{maxEnrollments}|">0/50</td>
@@ -29,11 +29,7 @@
                     <td>
                         <a class="btn btn-success" href="/courses/all" th:href="@{/courses/detail/{courseId}(courseId=${course.id})}" type="button">Detail</a>
                         <button class="btn btn-danger btn-unenroll-course" data-bs-target="#unenroll_course_modal" data-bs-toggle="modal"
-                                type="button">
-                            <!--                                th:data-id="${evaluation.id}"-->
-                            <!--                                th:data-iscommended="${evaluation.isCommended}"-->
-                            <!--                                th:data-reason="${evaluation.reason}"-->
-                            <!--                        >-->
+                                type="button" th:data-id="*{id}" >
                             Unenroll
                         </button>
                     </td>
@@ -41,50 +37,41 @@
                 </tbody>
             </table>
 
-            <!--             Pagination-->
-<!--            <nav aria-label="Page navigation">-->
-<!--                <ul class="pagination">-->
-<!--                    <li-->
-<!--                            class="page-item"-->
-<!--                            th:class="${evaluationPage.hasPrevious() ? '' : 'disabled'}"-->
-<!--                    >-->
-<!--                        <a-->
-<!--                                class="page-link"-->
-<!--                                th:href="@{/evaluation(page=${evaluationPage.number - 1})}"-->
-<!--                                th:if="${evaluationPage.hasPrevious()}"-->
-<!--                                th:text="#{pagination.previous}"-->
-<!--                        >Previous</a-->
-<!--                        >-->
-<!--                    </li>-->
+            <!--Pagination-->
+            <nav aria-label="Page navigation">
+                <ul class="pagination">
+                    <li class="page-item" >
+                        <a
+                                class="page-link"
+                                th:href="@{/courses/my-course(page=${courses.currentPage - 1})}"
+                                th:if="${courses.currentPage > 1}"
+                        >Previous</a>
+                    </li>
 
-<!--                    <li-->
-<!--                            class="page-item"-->
-<!--                            th:class="${i == evaluationPage.number ? 'active' : ''}"-->
-<!--                            th:each="i : ${#numbers.sequence(0, evaluationPage.totalPages - 1)}"-->
-<!--                            th:if="${evaluationPage.totalPages > 0}"-->
-<!--                    >-->
-<!--                        <a-->
-<!--                                class="page-link"-->
-<!--                                th:href="@{/evaluation(page=${i})}"-->
-<!--                                th:text="${i + 1}"-->
-<!--                        >1</a-->
-<!--                        >-->
-<!--                    </li>-->
+                    <li
+                            class="page-item"
+                            th:class="${i == courses.currentPage ? 'active' : ''}"
+                            th:each="i : ${#numbers.sequence(1, courses.totalPages)}"
+                            th:if="${courses.totalPages > 0}"
+                    >
+                        <a
+                                class="page-link"
+                                th:href="@{/courses/my-course(page=${i})}"
+                                th:text="${i}"
+                        >1</a>
+                    </li>
 
-<!--                    <li-->
-<!--                            class="page-item"-->
-<!--                            th:class="${evaluationPage.hasNext() ? '' : 'disabled'}"-->
-<!--                    >-->
-<!--                        <a-->
-<!--                                class="page-link"-->
-<!--                                th:href="@{/evaluation(page=${evaluationPage.number + 1})}"-->
-<!--                                th:if="${evaluationPage.hasNext()}"-->
-<!--                                th:text="#{pagination.next}"-->
-<!--                        >Next</a-->
-<!--                        >-->
-<!--                    </li>-->
-<!--                </ul>-->
-<!--            </nav>-->
+                    <li class="page-item">
+
+                        <a
+                                class="page-link"
+                                th:href="@{/courses/my-course(page=${courses.currentPage + 1})}"
+                                th:if="${courses.currentPage < courses.totalPages}"
+                        >Next</a
+                        >
+                    </li>
+                </ul>
+            </nav>
 
         </div>
     </div>
@@ -113,3 +100,43 @@
         </div>
     </div>
 </div>
+
+<script>
+    $(document).ready(function () {
+
+        // Start unenroll course
+
+        // 1. transfer courseId to unenroll modal
+        $(".btn-unenroll-course").click(function () {
+            $("#btn_submit_unenroll_course").val($(this).data('id'));
+        })
+
+        // 2. unenroll course
+        $("#btn_submit_unenroll_course").click(function () {
+            let id = $(this).val();
+
+            $.ajax({
+                url: "/enrollments/delete",
+                contentType: "application/json",
+                type: "DELETE",
+                data: JSON.stringify({
+                    courseId: id
+                }),
+                success: function(response) {
+                    createToast("info", "Unenroll course successfully");
+                    console.log(response);
+                    setTimeout(function() {
+                        window.location.reload()
+                    }, 1500);
+                },
+                error: function(xhr, status, error) {
+                    // Xử lý khi có lỗi
+                    createToast("danger", xhr.responseJSON.message)
+                    console.log("Error:", xhr);
+                }
+            });
+        })
+
+        // End unenroll course
+    })
+</script>

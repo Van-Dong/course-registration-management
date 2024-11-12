@@ -4,6 +4,8 @@ import com.dongnv.courseregistrationmanagement.dto.ApiResponse;
 import com.dongnv.courseregistrationmanagement.dto.request.AuthenticationRequest;
 import com.dongnv.courseregistrationmanagement.dto.response.AuthenticationResponse;
 import com.dongnv.courseregistrationmanagement.service.AuthenticationService;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -33,5 +35,15 @@ public class AuthenticationController {
     @GetMapping("/register")
     String register() {
         return "authentication/register";
+    }
+
+    @GetMapping("/logout")
+    String logout(HttpServletResponse response) {
+        Cookie cookie = new Cookie("access_token", "");
+        cookie.setMaxAge(0);
+        cookie.setPath("/");
+        response.addCookie(cookie);
+
+        return "redirect:/auth/login";
     }
 }

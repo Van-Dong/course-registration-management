@@ -10,7 +10,6 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Repository
 public interface CourseRepository extends JpaRepository<Course, Long> {
@@ -19,9 +18,10 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
     Page<Course> findUpcomingAndNotFullCourses(Pageable pageable);
 
     @Query("""
-            SELECT new com.dongnv.courseregistrationmanagement.dto.response.CountEnrollmentInWeekResponse(c.id, c.title, c.currentEnrollments, c.maxEnrollments, count(e))
+            SELECT new com.dongnv.courseregistrationmanagement.dto.response.CountEnrollmentInWeekResponse(c.id, c.title, c.currentEnrollments, c.maxEnrollments, count(e) AS countEnrollment)
             FROM Course c LEFT JOIN Enrollment e ON e.courseId = c.id AND e.enrollmentDate BETWEEN :startOfWeek AND :endOfWeek
-            GROUP BY c.id""")
+            GROUP BY c.id
+            ORDER BY count(e) DESC""")
     Page<CountEnrollmentInWeekResponse> countEnrollmentInWeek(@Param("startOfWeek") LocalDateTime startOfWeek,
                                                               @Param("endOfWeek") LocalDateTime endOfWeek,
                                                               Pageable pageable);
@@ -30,5 +30,5 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
     boolean currentEnrollmentsLessThanMaxEnrollmentsById(@Param("id") Long id);
 
     @Query("SELECT c FROM Course c JOIN Enrollment e ON c.id = e.courseId WHERE e.userId = :userId ORDER BY e.enrollmentDate DESC")
-    List<Course> findAllByUserId(@Param("userId") Long userId);
+    Page<Course> findAllByUserId(@Param("userId") Long userId, Pageable pageable);
 }
