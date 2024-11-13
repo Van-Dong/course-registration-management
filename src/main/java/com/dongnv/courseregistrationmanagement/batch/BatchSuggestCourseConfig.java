@@ -161,7 +161,7 @@ public class BatchSuggestCourseConfig {
 				<div class="container">
 					<h2>Nhắc nhở đăng ký khóa học</h2>
 					<p>Chào <i>%s</i>,</p>
-					<p>Bạn vẫn chưa đăng ký một số khóa học bắt buộc cho kỳ học sắp tới. Hãy nhanh chóng hoàn thành đăng ký để đảm bảo bạn sẽ không bỏ lỡ các khóa học này.</p>
+					<p>Bạn vẫn còn một số khóa học thú vị cho kỳ học sắp tới chưa đăng ký. Hãy cân nhắc đăng ký sớm để không bỏ lỡ cơ hội tham gia các khóa học này nhé!</p>
 					<div class="course-list">
 						<h3>Các khóa học bạn chưa đăng ký:</h3>
 						%s

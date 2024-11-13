@@ -1,0 +1,21 @@
+version: "3.8"
+
+services:
+  course_registration:
+    build: .
+    image: course_registration
+    ports:
+      - '8080:8080'
+    environment:
+      DBMS_CONNECTION: jdbc:mysql://mysql:3306/course_registration
+      DBMS_USERNAME: mysql
+      DBMS_PASSWORD: dongnv
+      MAIL_PASSWORD: kyxk gutl wfbh ihgp
+    depends_on:
+      - mysql
+  mysql:
+    image: mysql:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: dongnv
+      MYSQL_DATABASE: course_registration
+

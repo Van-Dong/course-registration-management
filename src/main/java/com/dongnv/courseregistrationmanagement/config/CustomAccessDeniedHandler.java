@@ -29,19 +29,6 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
     public void handle(
             HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException)
             throws IOException, ServletException {
-        //        ErrorCode errorCode = ErrorCode.UNAUTHORIZED;
-        //
-        //        response.setStatus(errorCode.getStatusCode().value());
-        //        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        //
-        //        ApiResponse<Void> apiResponse = ApiResponse.<Void>builder()
-        //                .code(errorCode.getCode())
-        //                .message(errorCode.getMessage())
-        //                .build();
-        //
-        //        response.getWriter().write(objectMapper.writeValueAsString(apiResponse));
-        //        response.flushBuffer();
-
         // Vì cái này nằm ở filter --> ngoài MVC --＞ Không thể trả về trực tiếp View được mà phải qua Dispatcher Servlet
         response.setStatus(HttpServletResponse.SC_FORBIDDEN);
         response.setContentType(MediaType.TEXT_HTML_VALUE);

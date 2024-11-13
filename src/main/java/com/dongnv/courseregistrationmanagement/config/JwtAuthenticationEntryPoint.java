@@ -32,18 +32,6 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
     public void commence(
             HttpServletRequest request, HttpServletResponse response, AuthenticationException authException)
             throws IOException, ServletException {
-        //        ErrorCode errorCode = ErrorCode.UNAUTHENTICATED;
-        //
-        //        response.setStatus(errorCode.getStatusCode().value());
-        //        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-
-        //        ApiResponse<Void> apiResponse = ApiResponse.<Void>builder()
-        //                .code(errorCode.getCode())
-        //                .message(errorCode.getMessage())
-        //                .build();
-        //
-        //        response.getWriter().write(objectMapper.writeValueAsString(apiResponse));
-        //        response.flushBuffer();
 
         Cookie cookie = new Cookie(COOKIE_NAME, "");
         cookie.setMaxAge(0);

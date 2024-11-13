@@ -9,9 +9,9 @@ spring:
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    jdbcUrl: jdbc:mysql://localhost:3306/course_registration
-    username: root
-    password: dongnv
+    url: ${DBMS_CONNECTION:jdbc:mysql://localhost:3306/course_registration}
+    username: ${DBMS_USERNAME:root}
+    password: ${DBMS_USERNAME:dongnv}
 
   jpa:
     hibernate:
@@ -19,42 +19,35 @@ spring:
     show-sql: true
     database-platform: org.hibernate.dialect.MySQLDialect
 
-
   batch:
     jdbc:
       initialize-schema: always
     job:
       enabled: false  # tắt việc job tự động chạy bằng JobLauncherApplicationRunner
-    datasource:
-      driver-class-name: com.mysql.cj.jdbc.Driver
-      jdbcUrl: jdbc:mysql://localhost:3306/batch_db
-      username: root
-      password: dongnv
 
   mail:
     host: smtp.gmail.com
     port: 587
     username: dongnv4724@gmail.com
-    password: kyxk gutl wfbh ihgp
+    password: ${MAIL_PASSWORD:kyxk gutl wfbh ihgp}
     properties:
       mail:
         smtp:
           auth: true
           starttls:
             enable: true
-  task:
+
+  task: # Số thread chạy scheduling task
     scheduling:
       pool:
         size: 5
+
   thymeleaf:
     cache: false
-app:
-  account-admin:
-    username: admin
-    password: admin
+
 jwt:
   signer-key: pEKWBDkFc9GHbPGrFK9S0Ao4ak5bQHx6FhzoMJv78cnqA5+8pHiAAq+cw3t1+454
-  issuer: DongBatTu
+  issuer: VietIs
   expired: 45 # minutes
   expired-with-remember-me: 4320 # 3 days
   cookie-name: access_token

@@ -58,7 +58,7 @@ public class AuthenticationService {
     @Value("${jwt.expired-with-remember-me}")
     int EXPIRED_WITH_REMEMBER_ME;
 
-    @Transactional(transactionManager = "primaryTransactionManager")
+    @Transactional
     public UserResponse register(UserCreationRequest request) {
         User user = userMapper.toUser(request);
         user.setPassword(passwordEncoder.encode(user.getPassword()));

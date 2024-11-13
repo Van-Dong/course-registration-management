@@ -42,7 +42,7 @@ public class EnrollmentService {
     ConcurrentHashMap<Long, Lock> locks = new ConcurrentHashMap<>();
     CourseMapper courseMapper;
 
-    @Transactional(transactionManager = "primaryTransactionManager")
+    @Transactional
     public EnrollCourseResponse enrollCourse(EnrollCourseRequest request) {
         Course course = getCourseAndCheckCondition(request.getCourseId());
         Long id = getCurrentUserId();
@@ -59,7 +59,7 @@ public class EnrollmentService {
                 .build();
     }
 
-    @Transactional(transactionManager = "primaryTransactionManager")
+    @Transactional
     public void unenrollCourse(UnenrollCourseRequest request) {
         Course course = getCourseAndCheckCondition(request.getCourseId());
         Long id = getCurrentUserId();
