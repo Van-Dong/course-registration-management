@@ -1,6 +1,11 @@
 package com.dongnv.courseregistrationmanagement.config;
 
+import java.util.HashMap;
+import java.util.Map;
+import javax.sql.DataSource;
+
 import jakarta.persistence.EntityManagerFactory;
+
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
@@ -12,17 +17,13 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 
-import javax.sql.DataSource;
-import java.util.HashMap;
-import java.util.Map;
-
+// Cấu hình DataSource, EntityManagerFactory và TransactionManager cho database của entity
 @Configuration
 @EnableJpaRepositories(
         basePackages = "com.dongnv.courseregistrationmanagement.repository",
         entityManagerFactoryRef = "primaryEntityManagerFactory",
-        transactionManagerRef = "primaryTransactionManager"
-)
-public class PrimaryDataSourceConfig {  // Database for entity (Course, Enrollment, User)
+        transactionManagerRef = "primaryTransactionManager")
+public class PrimaryDataSourceConfig { // Database for entity (Course, Enrollment, User)
 
     @Bean(name = "primaryDataSource")
     @ConfigurationProperties(prefix = "spring.datasource")
@@ -42,12 +43,15 @@ public class PrimaryDataSourceConfig {  // Database for entity (Course, Enrollme
 
         // Thiết lập các thuộc tính Hibernate
         Map<String, Object> properties = new HashMap<>();
-        properties.put("hibernate.dialect", "org.hibernate.dialect.MySQLDialect"); // Đổi thành Dialect phù hợp với CSDL của bạn
+        properties.put(
+                "hibernate.dialect",
+                "org.hibernate.dialect.MySQLDialect"); // Đổi thành Dialect phù hợp với CSDL của bạn
         properties.put("hibernate.hbm2ddl.auto", "update"); // Có thể cấu hình theo nhu cầu (update, create, etc.)
 
         em.setJpaPropertyMap(properties);
         return em;
     }
+
     @Bean(name = "primaryTransactionManager")
     public PlatformTransactionManager primaryTransactionManager(
             @Qualifier("primaryEntityManagerFactory") EntityManagerFactory entityManagerFactory) {

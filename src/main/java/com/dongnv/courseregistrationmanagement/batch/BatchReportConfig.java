@@ -1,10 +1,10 @@
 package com.dongnv.courseregistrationmanagement.batch;
 
-import com.dongnv.courseregistrationmanagement.dto.response.CountEnrollmentInWeekResponse;
-import com.dongnv.courseregistrationmanagement.repository.CourseRepository;
-import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.HashMap;
+
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.job.builder.JobBuilder;
@@ -21,10 +21,12 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.data.domain.Sort;
 import org.springframework.transaction.PlatformTransactionManager;
 
-import java.time.DayOfWeek;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.HashMap;
+import com.dongnv.courseregistrationmanagement.dto.response.CountEnrollmentInWeekResponse;
+import com.dongnv.courseregistrationmanagement.repository.CourseRepository;
+
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 
 @Configuration
 @RequiredArgsConstructor
@@ -35,7 +37,7 @@ public class BatchReportConfig {
 
     @Bean
     public ItemReader<CountEnrollmentInWeekResponse> readerForExportReport() {
-        LocalDate today = LocalDate.now().minusDays(1);  // run in 3:00 AM Monday
+        LocalDate today = LocalDate.now().minusDays(1); // run in 3:00 AM Monday
         LocalDateTime startOfWeek = today.with(DayOfWeek.MONDAY).atStartOfDay();
         LocalDateTime endOfWeek = today.with(DayOfWeek.SUNDAY).atTime(23, 59, 59);
 
@@ -57,12 +59,10 @@ public class BatchReportConfig {
         return new LineAggregator<CountEnrollmentInWeekResponse>() {
             @Override
             public String aggregate(CountEnrollmentInWeekResponse item) {
-
-
-                return  item.getId() + ", " +
-                        item.getTitle() + ", " +
-                        item.getCountEnrollmentInWeek() + ", " +
-                        item.getCurrentEnrollments() + "/" + item.getMaxEnrollments();
+                return item.getId() + ", " + item.getTitle()
+                        + ", " + item.getCountEnrollmentInWeek()
+                        + ", " + item.getCurrentEnrollments()
+                        + "/" + item.getMaxEnrollments();
             }
         };
     }

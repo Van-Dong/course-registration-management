@@ -1,5 +1,11 @@
 package com.dongnv.courseregistrationmanagement.batch;
 
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import javax.sql.DataSource;
+
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.core.launch.support.TaskExecutorJobLauncher;
@@ -19,12 +25,7 @@ import org.springframework.jdbc.datasource.init.DataSourceInitializer;
 import org.springframework.jdbc.datasource.init.DatabasePopulator;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 
-import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-
+// Cấu hình giúp tạo database riêng cho spring batch và model entity của ta
 @Configuration
 @EnableBatchProcessing(dataSourceRef = "batchDataSource", transactionManagerRef = "batchTransactionManager")
 public class BatchConfig {
@@ -34,7 +35,7 @@ public class BatchConfig {
     @Bean
     @BatchDataSource
     @ConfigurationProperties("spring.batch.datasource")
-    public DataSource batchDataSource() {  // Database for Metadata of Batch
+    public DataSource batchDataSource() { // Database for Metadata of Batch
         return DataSourceBuilder.create().build();
     }
 
@@ -44,11 +45,12 @@ public class BatchConfig {
         return new DataSourceTransactionManager(batchDataSource);
     }
 
+    // Khởi tạo các bảng cần cho database spring batch
     @Bean
     public DataSourceInitializer batchDataSourceInitializer(DataSource batchDataSource) {
         DataSourceInitializer initializer = new DataSourceInitializer();
         initializer.setDataSource(batchDataSource);
-        if (!isSchemaInitialized(batchDataSource)) {
+        if (!isSchemaInitialized(batchDataSource)) { // Check xem đã tạo bảng chưa
             if ("always".equals(initializeSchema) || "embedded".equals(initializeSchema)) {
                 Resource schemaResource = new ClassPathResource("org/springframework/batch/core/schema-mysql.sql");
                 initializer.setDatabasePopulator(databasePopulator(schemaResource));
@@ -63,21 +65,24 @@ public class BatchConfig {
         populator.addScript(schemaResource);
         return populator;
     }
+
     private boolean isSchemaInitialized(DataSource dataSource) {
         try (Connection connection = dataSource.getConnection()) {
             // Kiểm tra sự tồn tại của bảng mà bạn muốn kiểm tra (ví dụ: BATCH_JOB_INSTANCE)
             String sql = "SELECT COUNT(*) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'BATCH_JOB_INSTANCE'";
-            try (Statement stmt = connection.createStatement(); ResultSet rs = stmt.executeQuery(sql)) {
+            try (Statement stmt = connection.createStatement();
+                    ResultSet rs = stmt.executeQuery(sql)) {
                 if (rs.next()) {
-                    return rs.getInt(1) > 0;  // Trả về true nếu bảng đã tồn tại
+                    return rs.getInt(1) > 0; // Trả về true nếu bảng đã tồn tại
                 }
             }
         } catch (SQLException ex) {
             ex.printStackTrace(); // Xử lý lỗi nếu có
         }
-        return false;  // Trả về false nếu không thể kiểm tra
+        return false; // Trả về false nếu không thể kiểm tra
     }
 
+    // Async JobLauncher
     @Bean
     public JobLauncher customJobLauncher(JobRepository jobRepository) throws Exception {
         TaskExecutorJobLauncher jobLauncher = new TaskExecutorJobLauncher();

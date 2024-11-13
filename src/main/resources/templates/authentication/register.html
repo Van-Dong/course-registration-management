@@ -182,7 +182,7 @@
                 $("#error-confirm-password").show();
             } else {
                 $.post({
-                    url: "/users/register",
+                    url: "/auth/register",
                     contentType: "application/json",
                     data: JSON.stringify({
                         fullName: fullName,

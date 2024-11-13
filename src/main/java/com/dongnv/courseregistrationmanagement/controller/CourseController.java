@@ -1,5 +1,11 @@
 package com.dongnv.courseregistrationmanagement.controller;
 
+import jakarta.validation.Valid;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+
 import com.dongnv.courseregistrationmanagement.dto.ApiResponse;
 import com.dongnv.courseregistrationmanagement.dto.PageResponse;
 import com.dongnv.courseregistrationmanagement.dto.request.CourseCreationRequest;
@@ -7,14 +13,11 @@ import com.dongnv.courseregistrationmanagement.dto.request.CourseUpdateRequest;
 import com.dongnv.courseregistrationmanagement.dto.response.CourseResponse;
 import com.dongnv.courseregistrationmanagement.service.CourseService;
 import com.dongnv.courseregistrationmanagement.service.EnrollmentService;
-import jakarta.validation.Valid;
+
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequiredArgsConstructor
@@ -24,18 +27,11 @@ public class CourseController {
     CourseService courseService;
     EnrollmentService enrollmentService;
 
-    @PostMapping("/courses/create")
-    @ResponseBody
-    ApiResponse<CourseResponse> createCourse(@Valid @RequestBody CourseCreationRequest request) {
-        return ApiResponse.<CourseResponse>builder()
-                .result(courseService.createCourse(request))
-                .build();
-    }
-
     @GetMapping(value = {"/courses/all", "/"})
-    String getCourses(@RequestParam(value = "page", defaultValue = "1") int page,
-                      @RequestParam(value = "size", defaultValue = "12") int size,
-                      Model model) {
+    String getCourses(
+            @RequestParam(value = "page", defaultValue = "1") int page,
+            @RequestParam(value = "size", defaultValue = "12") int size,
+            Model model) {
         page = page < 1 ? 1 : page;
         size = size < 1 ? 12 : size;
         PageResponse<CourseResponse> courses = courseService.getCourses(page, size);
@@ -54,8 +50,10 @@ public class CourseController {
     }
 
     @GetMapping("/courses/my-course")
-    String getMyCourse(@RequestParam(value = "page", defaultValue = "1") int page,
-                       @RequestParam(value = "size", defaultValue = "10") int size, Model model) {
+    String getMyCourse(
+            @RequestParam(value = "page", defaultValue = "1") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size,
+            Model model) {
         page = page < 1 ? 1 : page;
         size = size < 1 ? 10 : size;
         PageResponse<CourseResponse> courses = courseService.getMyCourses(page, size);
@@ -64,14 +62,23 @@ public class CourseController {
     }
 
     @GetMapping("/courses/manager")
-    String getCourseManager(@RequestParam(value = "page", defaultValue = "1") int page,
-                            @RequestParam(value = "size", defaultValue = "10") int size,
-                            Model model) {
+    String getCourseManager(
+            @RequestParam(value = "page", defaultValue = "1") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size,
+            Model model) {
         page = page < 1 ? 1 : page;
         size = size < 1 ? 10 : size;
         PageResponse<CourseResponse> courses = courseService.getCourses(page, size);
         model.addAttribute("courses", courses);
         return "course/course-manager";
+    }
+
+    @PostMapping("/courses/create")
+    @ResponseBody
+    ApiResponse<CourseResponse> createCourse(@Valid @RequestBody CourseCreationRequest request) {
+        return ApiResponse.<CourseResponse>builder()
+                .result(courseService.createCourse(request))
+                .build();
     }
 
     @PutMapping("/courses/update/{courseId}")
@@ -86,9 +93,6 @@ public class CourseController {
     @ResponseBody
     ApiResponse<Void> deleteCourse(@PathVariable Long courseId) {
         courseService.deleteCourse(courseId);
-        return ApiResponse.<Void>builder()
-                .message("Delete successfully!")
-                .build();
+        return ApiResponse.<Void>builder().message("Delete successfully!").build();
     }
-
 }

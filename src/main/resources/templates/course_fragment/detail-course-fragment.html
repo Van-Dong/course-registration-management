@@ -1,6 +1,7 @@
 <!-- Content -->
 <div class="mx-4" style="min-height: 80vh;">
-    <div class="container mt-5" th:object="${course}">
+    <div class="container mt-5" th:object="${course}"
+         th:with="isFull=${course.currentEnrollments >= course.maxEnrollments},isStarted=${course.startDate.isBefore(T(java.time.LocalDate).now())}">
         <!-- Course Title -->
         <div class="text-center mb-4">
             <h2 class="fw-bold">Course: <span id="courseTitle text-primary" th:text="*{title}">Course Title</span></h2>
@@ -10,6 +11,14 @@
         <div class="card shadow-lg">
             <div class="card-body">
                 <h5 class="card-title fw-normal fst-italic">Course Details</h5>
+
+                <!-- Status -->
+                <span class="card-text card-box-text">
+                    <strong>Status:</strong>
+                    <small class="badge bg-success" th:if="${!(isFull || isStarted)}">Available</small>
+                    <small class="badge bg-danger" th:if="${isFull && !isStarted}">Full</small>
+                    <small class="badge bg-danger" th:if="${isStarted}">Started</small>
+                </span> <br/>
 
                 <!-- Description -->
                 <p class="card-text mb-2"><strong>Description:</strong> <span id="courseDescription" th:text="*{description}">[Course Description]</span></p>
@@ -28,8 +37,8 @@
 
         <!-- Enrollment and Unenrollment Buttons -->
         <div class="text-center mt-4">
-            <button id="enrollBtn" class="btn btn-success me-2" th:data-id="*{id}" th:disabled="${isEnroll}">Enroll</button>
-            <button id="unenrollBtn" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#modal_unenroll_course" th:disabled="${!isEnroll}">Unenroll</button>
+            <button id="enrollBtn" class="btn btn-success me-2" th:data-id="*{id}" th:disabled="${isEnroll || isFull || isStarted}">Enroll</button>
+            <button id="unenrollBtn" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#modal_unenroll_course" th:disabled="${!isEnroll || isFull || isStarted}">Unenroll</button>
         </div>
     </div>
 

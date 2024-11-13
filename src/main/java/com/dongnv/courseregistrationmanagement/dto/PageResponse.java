@@ -1,18 +1,17 @@
 package com.dongnv.courseregistrationmanagement.dto;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import lombok.*;
-import lombok.experimental.FieldDefaults;
-
 import java.util.Collections;
 import java.util.List;
+
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class PageResponse<T>{
+public class PageResponse<T> {
     int currentPage;
     int totalPages;
     int pageSize;

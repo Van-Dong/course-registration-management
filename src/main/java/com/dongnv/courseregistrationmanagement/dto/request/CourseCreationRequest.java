@@ -1,10 +1,11 @@
 package com.dongnv.courseregistrationmanagement.dto.request;
 
+import java.time.LocalDate;
+
 import jakarta.validation.constraints.*;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.time.LocalDate;
 
 @Data
 @NoArgsConstructor

@@ -1,41 +1,36 @@
 package com.dongnv.courseregistrationmanagement.service;
 
+import java.time.LocalDate;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.dongnv.courseregistrationmanagement.dto.PageResponse;
 import com.dongnv.courseregistrationmanagement.dto.mapper.CourseMapper;
-import com.dongnv.courseregistrationmanagement.dto.mapper.UserMapper;
 import com.dongnv.courseregistrationmanagement.dto.request.EnrollCourseRequest;
 import com.dongnv.courseregistrationmanagement.dto.request.UnenrollCourseRequest;
 import com.dongnv.courseregistrationmanagement.dto.response.EnrollCourseResponse;
 import com.dongnv.courseregistrationmanagement.dto.response.StudentInCourseResponse;
 import com.dongnv.courseregistrationmanagement.dto.response.UserEnrollmentResponse;
-import com.dongnv.courseregistrationmanagement.dto.response.UserResponse;
 import com.dongnv.courseregistrationmanagement.exception.AppException;
 import com.dongnv.courseregistrationmanagement.exception.ErrorCode;
 import com.dongnv.courseregistrationmanagement.model.Course;
 import com.dongnv.courseregistrationmanagement.model.Enrollment;
-import com.dongnv.courseregistrationmanagement.model.User;
 import com.dongnv.courseregistrationmanagement.repository.CourseRepository;
 import com.dongnv.courseregistrationmanagement.repository.EnrollmentRepository;
+
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.jdbc.datasource.DataSourceTransactionManager;
-import org.springframework.orm.jpa.JpaTransactionManager;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDate;
-import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 @Service
 @RequiredArgsConstructor
@@ -46,17 +41,15 @@ public class EnrollmentService {
     CourseRepository courseRepository;
     ConcurrentHashMap<Long, Lock> locks = new ConcurrentHashMap<>();
     CourseMapper courseMapper;
-    
+
     @Transactional(transactionManager = "primaryTransactionManager")
     public EnrollCourseResponse enrollCourse(EnrollCourseRequest request) {
         Course course = getCourseAndCheckCondition(request.getCourseId());
         Long id = getCurrentUserId();
-        Enrollment enrollment = Enrollment.builder()
-                .userId(id)
-                .courseId(request.getCourseId())
-                .build();
+        Enrollment enrollment =
+                Enrollment.builder().userId(id).courseId(request.getCourseId()).build();
 
-        // Lock block have race conditional
+        // Lock block where have race conditional
         Lock lock = locks.computeIfAbsent(course.getId(), key -> new ReentrantLock());
         saveEnrollment(course, enrollment, lock);
 
@@ -71,8 +64,7 @@ public class EnrollmentService {
         Course course = getCourseAndCheckCondition(request.getCourseId());
         Long id = getCurrentUserId();
 
-        if (LocalDate.now().isAfter(course.getStartDate()))
-            throw new AppException(ErrorCode.COURSE_IS_STARTED);
+        if (LocalDate.now().isAfter(course.getStartDate())) throw new AppException(ErrorCode.COURSE_IS_STARTED);
         enrollmentRepository.deleteEnrollmentByUserIdAndCourseId(id, request.getCourseId());
 
         course.setCurrentEnrollments(course.getCurrentEnrollments() - 1);
@@ -85,8 +77,10 @@ public class EnrollmentService {
     }
 
     public StudentInCourseResponse getStudentInCourseById(Long courseId, int page, int size) {
-        Course course = courseRepository.findById(courseId).orElseThrow(() -> new AppException(ErrorCode.COURSE_NOT_FOUND));
-        Page<UserEnrollmentResponse> userPage = enrollmentRepository.getUsersByCourseId(courseId, PageRequest.of(page - 1, size));
+        Course course =
+                courseRepository.findById(courseId).orElseThrow(() -> new AppException(ErrorCode.COURSE_NOT_FOUND));
+        Page<UserEnrollmentResponse> userPage =
+                enrollmentRepository.getUsersByCourseId(courseId, PageRequest.of(page - 1, size));
 
         PageResponse<UserEnrollmentResponse> userPageResponse = PageResponse.<UserEnrollmentResponse>builder()
                 .currentPage(page)
@@ -102,22 +96,17 @@ public class EnrollmentService {
                 .build();
     }
 
-
-
     private static Long getCurrentUserId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return Long.parseLong(authentication.getName());
     }
 
     private Course getCourseAndCheckCondition(Long request) {
-        Course course = courseRepository.findById(request).orElseThrow(
-                () -> new AppException(ErrorCode.COURSE_NOT_FOUND)
-        );
-        if (course.getStartDate().isBefore(LocalDate.now()))
-            throw new AppException(ErrorCode.COURSE_IS_STARTED);
+        Course course =
+                courseRepository.findById(request).orElseThrow(() -> new AppException(ErrorCode.COURSE_NOT_FOUND));
+        if (course.getStartDate().isBefore(LocalDate.now())) throw new AppException(ErrorCode.COURSE_IS_STARTED);
         return course;
     }
-
 
     private void saveEnrollment(Course course, Enrollment enrollment, Lock lock) {
         try {

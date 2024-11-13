@@ -1,13 +1,14 @@
 package com.dongnv.courseregistrationmanagement.batch;
 
-import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.*;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Component
@@ -18,6 +19,7 @@ public class BatchJobScheduler {
     Job exportReportJob;
     Job sendSuggestedEmailJob;
 
+    // 3:00 AM hàng tuần
     @Scheduled(cron = "0 0 3 ? * 1")
     public void runExportReportBatchJob() {
         try {
@@ -31,6 +33,7 @@ public class BatchJobScheduler {
         }
     }
 
+    // 3:00 AM hàng tuần
     @Scheduled(cron = "0 0 3 ? * 1")
     public void runSuggestedCourseBatchJob() {
         try {

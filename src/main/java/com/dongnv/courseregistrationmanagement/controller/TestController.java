@@ -1,23 +1,16 @@
 package com.dongnv.courseregistrationmanagement.controller;
 
-import com.dongnv.courseregistrationmanagement.dto.projection.UserProjection;
-import com.dongnv.courseregistrationmanagement.repository.CourseRepository;
-import com.dongnv.courseregistrationmanagement.repository.EnrollmentRepository;
+import org.springframework.batch.core.*;
+import org.springframework.batch.core.launch.JobLauncher;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.dongnv.courseregistrationmanagement.service.ReportService;
+
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.batch.core.*;
-import org.springframework.batch.core.launch.JobLauncher;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.time.DayOfWeek;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Slf4j
 @RestController
@@ -28,6 +21,7 @@ public class TestController {
     ReportService reportService;
 
     Job sendSuggestedEmailJob;
+
     @GetMapping("/runBatchJob")
     public String runBatchJob() {
         try {

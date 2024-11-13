@@ -1,28 +1,25 @@
 package com.dongnv.courseregistrationmanagement.service;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
+
 import com.dongnv.courseregistrationmanagement.dto.PageResponse;
 import com.dongnv.courseregistrationmanagement.dto.mapper.CourseMapper;
 import com.dongnv.courseregistrationmanagement.dto.request.CourseCreationRequest;
 import com.dongnv.courseregistrationmanagement.dto.request.CourseUpdateRequest;
 import com.dongnv.courseregistrationmanagement.dto.response.CourseResponse;
-import com.dongnv.courseregistrationmanagement.dto.response.StudentInCourseResponse;
 import com.dongnv.courseregistrationmanagement.exception.AppException;
 import com.dongnv.courseregistrationmanagement.exception.ErrorCode;
 import com.dongnv.courseregistrationmanagement.model.Course;
-import com.dongnv.courseregistrationmanagement.model.User;
 import com.dongnv.courseregistrationmanagement.repository.CourseRepository;
+
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -39,7 +36,9 @@ public class CourseService {
                 .totalPages(courses.getTotalPages())
                 .pageSize(courses.getSize())
                 .totalElements(courses.getTotalElements())
-                .data(courses.getContent().stream().map(courseMapper::toCourseResponse).toList())
+                .data(courses.getContent().stream()
+                        .map(courseMapper::toCourseResponse)
+                        .toList())
                 .build();
     }
 
@@ -58,7 +57,9 @@ public class CourseService {
                 .totalPages(coursePage.getTotalPages())
                 .pageSize(coursePage.getSize())
                 .totalElements(coursePage.getTotalElements())
-                .data(coursePage.getContent().stream().map(courseMapper::toCourseResponse).toList())
+                .data(coursePage.getContent().stream()
+                        .map(courseMapper::toCourseResponse)
+                        .toList())
                 .build();
     }
 
@@ -69,9 +70,7 @@ public class CourseService {
     }
 
     public CourseResponse updateCourse(CourseUpdateRequest request, Long id) {
-        Course course = courseRepository.findById(id).orElseThrow(
-                () -> new AppException(ErrorCode.COURSE_NOT_FOUND)
-        );
+        Course course = courseRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.COURSE_NOT_FOUND));
         courseMapper.updateCourse(course, request);
         course = courseRepository.save(course);
         return courseMapper.toCourseResponse(course);
@@ -80,6 +79,4 @@ public class CourseService {
     public void deleteCourse(Long id) {
         courseRepository.deleteById(id);
     }
-
-
 }

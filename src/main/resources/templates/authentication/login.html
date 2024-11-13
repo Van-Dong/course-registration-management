@@ -89,6 +89,10 @@
             <input type="password" class="form-control" id="password" name="password">
         </div>
         <p id="error" style="display: none;" class="text-danger text-center">Username or password incorrect!</p>
+        <div class="mb-3">
+            <input type="checkbox" id="rememberMe" name="rememberMe" class="form-check-input" style="width: 18px; height: 18px;">
+            <label for="rememberMe" class="h5 ms-2 form-check-label">Remember Me</label>
+        </div>
 
         <div>
             You don't have account ? <a style="border: none; text-decoration: none;" href="/auth/register" th:href="@{/auth/register}">Registry</a> now.
@@ -163,14 +167,16 @@
     $(document).ready(function () {
         $("#form-login").submit(function (event) {
             event.preventDefault();
-            email = $("#email").val();
-            password = $("#password").val();
+            let email = $("#email").val();
+            let password = $("#password").val();
+            let rememberMe = $("#rememberMe").prop('checked');
             $.post({
                 url: "/auth/token",
                 contentType: "application/json",
                 data: JSON.stringify({
                     email: email,
-                    password: password
+                    password: password,
+                    rememberMe: rememberMe
                 }),
                 success: function(response) {
                     createToast("info", "Login successfully");
@@ -178,7 +184,8 @@
 
                     // Save jwt Cookie
                     var expiryDate = new Date();
-                    expiryDate.setMinutes(expiryDate.getMinutes() + 60);
+                    let expried = rememberMe ? 4320 : 45;
+                    expiryDate.setMinutes(expiryDate.getMinutes() + expried);
                     document.cookie =`access_token=${response.result.access_token}; expires=${expiryDate.toUTCString()}; path=/`;
 
                     setTimeout(function () {

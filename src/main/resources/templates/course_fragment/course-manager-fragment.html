@@ -42,7 +42,7 @@
                         th:title="*{description}" >
                     </td>
                     <td>
-                        <a th:href="@{/enrollments/{courseId}(courseId=${course.id})}" th:text="|*{currentEnrollments}/*{maxEnrollments}|">0/0</a>
+                        <a th:href="@{/enrollments/students/{courseId}(courseId=${course.id})}" th:text="|*{currentEnrollments}/*{maxEnrollments}|">0/0</a>
                     </td>
                     <td th:text="*{startDate}"></td>
                     <td th:text="*{teacher}"></td>

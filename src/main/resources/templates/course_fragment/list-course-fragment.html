@@ -7,12 +7,13 @@
 
     <!-- Main content -->
     <div class="row">
-        <div th:each="course,iterStat : ${courses.data}" class="col-sm-6 col-md-4 col-lg-4 col-xl-3 col-xxl-3 my-3">
+        <div th:each="course,iterStat : ${courses.data}" class="col-sm-6 col-md-4 col-lg-4 col-xl-3 col-xxl-3 my-3" th:object="${course}"
+             th:with="isFull=${course.currentEnrollments >= course.maxEnrollments},isStarted=${course.startDate.isBefore(T(java.time.LocalDate).now())}">
             <div class="card shadow-sm">
                 <!-- Card header -->
                 <div class="card-header bg-white fs-6">
                     <div class="btn-group-for-client text-center" role="group">
-                        <h6 class="card-text card-box-text text-decoration-underline p-2" th:text="${course.title}">
+                        <h6 class="card-text card-box-text text-decoration-underline p-2" th:text="*{title}">
                             Khoá học spring boot 3 cơ bản
                         </h6>
                     </div>
@@ -23,26 +24,22 @@
                     <!-- Description -->
                     <span class="card-text card-box-text">
               <i>Description:</i>
-              <span th:text="${course.description}">Khóa học dạy ta những thế cơ bản về spring boot, về api rest, và về nhiều thứ khác nữa</span>
+              <span th:text="*{description}">Khóa học dạy ta những thế cơ bản về spring boot, về api rest, và về nhiều thứ khác nữa</span>
             </span>
                     <br />
 
                     <!-- Number of students -->
                     <span class="card-text card-box-text">
               <i>Number of students:</i>
-                        <span th:text="${course.maxEnrollments}">50</span>
+                        <span th:text="*{maxEnrollments}">50</span>
             </span> <br />
 
-<!--                    &lt;!&ndash; Start Date &ndash;&gt;-->
-<!--                    <span class="card-text card-box-text">-->
-<!--              <i>Start Date:</i>-->
-<!--              <small class="badge bg-secondary" th:text="${course.startDate}">10-11-2024</small>-->
-<!--            </span>-->
               <!-- Status -->
             <span class="card-text card-box-text">
-              <i>Status:</i>
-              <small class="badge bg-success" th:if="${course.currentEnrollments < course.maxEnrollments}">Available</small>
-              <small class="badge bg-danger" th:unless="${course.currentEnrollments < course.maxEnrollments}">Full</small>
+                <i>Status:</i>
+                <small class="badge bg-success" th:if="${!(isFull || isStarted)}">Available</small>
+                    <small class="badge bg-danger" th:if="${isFull && !isStarted}">Full</small>
+                    <small class="badge bg-danger" th:if="${isStarted}">Started</small>
             </span>
                     <br />
 

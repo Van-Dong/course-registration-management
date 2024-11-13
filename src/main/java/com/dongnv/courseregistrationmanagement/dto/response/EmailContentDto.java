@@ -1,10 +1,11 @@
 package com.dongnv.courseregistrationmanagement.dto.response;
 
+import java.util.List;
+
 import com.dongnv.courseregistrationmanagement.model.Course;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.util.List;
 
 @Data
 @NoArgsConstructor

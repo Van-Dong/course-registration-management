@@ -1,11 +1,13 @@
 package com.dongnv.courseregistrationmanagement.model;
 
+import java.time.LocalDateTime;
+
 import jakarta.persistence.*;
-import lombok.*;
-import lombok.experimental.FieldDefaults;
+
 import org.hibernate.annotations.CreationTimestamp;
 
-import java.time.LocalDateTime;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 @Getter
 @Setter
@@ -14,10 +16,13 @@ import java.time.LocalDateTime;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
-@Table(name = "enrollment", uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "course_id"}),
+@Table(
+        name = "enrollment",
+        uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "course_id"}),
         indexes = {@Index(columnList = "user_id"), @Index(columnList = "course_id")})
 public class Enrollment {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
     @Column(name = "user_id", nullable = false)
