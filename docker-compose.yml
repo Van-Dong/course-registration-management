@@ -2,20 +2,29 @@ version: "3.8"
 
 services:
   course_registration:
-    build: .
+    build:
+      context: .
+      dockerfile: app.Dockerfile
     image: course_registration
     ports:
       - '8080:8080'
     environment:
       DBMS_CONNECTION: jdbc:mysql://mysql:3306/course_registration
-      DBMS_USERNAME: mysql
-      DBMS_PASSWORD: dongnv
-      MAIL_PASSWORD: kyxk gutl wfbh ihgp
+      DBMS_USERNAME: root
+      DBMS_PASSWORD: root
+      MAIL_USERNAME: <your-gmail>
+      MAIL_PASSWORD: <your-gmail-app-password>
     depends_on:
       - mysql
   mysql:
-    image: mysql:latest
+    image: mysql:8
     environment:
-      MYSQL_ROOT_PASSWORD: dongnv
+      MYSQL_ROOT_HOST: '%'
+      MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: course_registration
+    volumes:
+      - mysql_data_cr:/var/lib/mysql
+
+volumes:
+  mysql_data_cr:
 

@@ -11,7 +11,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: ${DBMS_CONNECTION:jdbc:mysql://localhost:3306/course_registration}
     username: ${DBMS_USERNAME:root}
-    password: ${DBMS_USERNAME:dongnv}
+    password: ${DBMS_PASSWORD:root}
 
   jpa:
     hibernate:
@@ -28,8 +28,8 @@ spring:
   mail:
     host: smtp.gmail.com
     port: 587
-    username: dongnv4724@gmail.com
-    password: ${MAIL_PASSWORD:kyxk gutl wfbh ihgp}
+    username: ${MAIL_USERNAME:<your gmail>}
+    password: ${MAIL_PASSWORD:<your gmail app password>}
     properties:
       mail:
         smtp:
