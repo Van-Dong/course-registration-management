@@ -28,6 +28,7 @@ public class ReportService {
     CourseRepository courseRepository;
     EnrollmentRepository enrollmentRepository;
 
+    // Tính số lượt đăng ký của từng khóa học trong một tuần nào đó
     public PageResponse<CountEnrollmentInWeekResponse> countEnrollmentInWeek(int weekAgo, int page, int size) {
         LocalDate startDay = LocalDate.now().minusWeeks(weekAgo).with(DayOfWeek.MONDAY);
         LocalDateTime startDateTime = startDay.atStartOfDay();
@@ -43,6 +44,7 @@ public class ReportService {
                 .build();
     }
 
+    // Lấy danh sách weeks để làm dữ liệu cho tag <select>
     public List<String> getWeeks() {
         LocalDateTime oldestDatetime =
                 enrollmentRepository.getOldestEnrollmentDate().orElse(LocalDateTime.now());

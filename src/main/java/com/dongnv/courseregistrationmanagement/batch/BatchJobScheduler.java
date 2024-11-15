@@ -27,7 +27,6 @@ public class BatchJobScheduler {
                     .addLong("time", System.currentTimeMillis())
                     .toJobParameters();
             customJobLauncher.run(exportReportJob, jobParameters);
-            log.info("Job Completed");
         } catch (JobExecutionException e) {
             log.info("JobExecutionException: ", e);
         }
@@ -41,7 +40,6 @@ public class BatchJobScheduler {
                     .addLong("time", System.currentTimeMillis())
                     .toJobParameters();
             customJobLauncher.run(sendSuggestedEmailJob, jobParameters);
-            log.info("Job Completed");
         } catch (JobExecutionException e) {
             log.info("JobExecutionException: ", e);
         }

@@ -38,6 +38,7 @@ public class BatchSuggestCourseConfig {
     EnrollmentRepository enrollmentRepository;
     EmailService emailService;
 
+	// Item Reader
     @Bean
     public ItemReader<User> readerForSendSuggestedEmail() {
         HashMap<String, Sort.Direction> sorts = new HashMap<>();
@@ -53,6 +54,7 @@ public class BatchSuggestCourseConfig {
                 .build();
     }
 
+	// Item Processor
     @Bean
     public ItemProcessor<User, EmailContentDto> processorForSendSuggestedEmail() {
         return user -> {
@@ -65,6 +67,7 @@ public class BatchSuggestCourseConfig {
         };
     }
 
+	// Item Writer
     @Bean
     public ItemWriter<EmailContentDto> writerForSendSuggestedEmail() {
         return items -> {
@@ -75,6 +78,7 @@ public class BatchSuggestCourseConfig {
         };
     }
 
+	// Step
     @Bean
     public Step sendSuggestedEmailStep1(PlatformTransactionManager batchTransactionManager) {
         return new StepBuilder("sendSuggestedEmailStep1", jobRepository)
@@ -85,6 +89,7 @@ public class BatchSuggestCourseConfig {
                 .build();
     }
 
+	// Job
     @Bean
     public Job sendSuggestedEmailJob(Step sendSuggestedEmailStep1) {
         return new JobBuilder("sendSuggestedEmailJob", jobRepository)
@@ -93,6 +98,7 @@ public class BatchSuggestCourseConfig {
                 .build();
     }
 
+	// Tạo email content
     private String buildEmailContent(EmailContentDto emailContentDto) {
         StringBuilder courseDetails = new StringBuilder();
         for (Course course : emailContentDto.getCourses()) {

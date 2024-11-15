@@ -22,8 +22,6 @@ import lombok.experimental.NonFinal;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
-    //    ObjectMapper objectMapper;
-
     @NonFinal
     @Value("${jwt.cookie-name}")
     String COOKIE_NAME;
@@ -33,6 +31,7 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
             HttpServletRequest request, HttpServletResponse response, AuthenticationException authException)
             throws IOException, ServletException {
 
+        // Remove access_token cookie if authentication failed
         Cookie cookie = new Cookie(COOKIE_NAME, "");
         cookie.setMaxAge(0);
         cookie.setPath("/");

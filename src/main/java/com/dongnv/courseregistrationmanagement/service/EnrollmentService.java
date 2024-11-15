@@ -39,7 +39,7 @@ import lombok.extern.slf4j.Slf4j;
 public class EnrollmentService {
     EnrollmentRepository enrollmentRepository;
     CourseRepository courseRepository;
-    ConcurrentHashMap<Long, Lock> locks = new ConcurrentHashMap<>();
+    ConcurrentHashMap<Long, Lock> locks = new ConcurrentHashMap<>(); // Mỗi course dùng 1 khóa lock
     CourseMapper courseMapper;
 
     @Transactional
@@ -110,9 +110,10 @@ public class EnrollmentService {
 
     private void saveEnrollment(Course course, Enrollment enrollment, Lock lock) {
         try {
+            // Lock lại đoạn này để tránh bị Race conditional
             lock.lock();
             // Check course is full
-            if (!courseRepository.currentEnrollmentsLessThanMaxEnrollmentsById(course.getId()))
+            if (!courseRepository.courseIsFull(course.getId()))
                 throw new AppException(ErrorCode.COURSE_IS_FULL);
             enrollmentRepository.save(enrollment);
 

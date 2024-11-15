@@ -35,6 +35,7 @@ public class BatchReportConfig {
     JobRepository jobRepository;
     CourseRepository courseRepository;
 
+    // Item Reader
     @Bean
     public ItemReader<CountEnrollmentInWeekResponse> readerForExportReport() {
         LocalDate today = LocalDate.now().minusDays(1); // run in 3:00 AM Monday
@@ -54,6 +55,7 @@ public class BatchReportConfig {
                 .build();
     }
 
+    // Use in Item Writer
     @Bean
     public LineAggregator<CountEnrollmentInWeekResponse> lineAggregator() {
         return new LineAggregator<CountEnrollmentInWeekResponse>() {
@@ -67,6 +69,7 @@ public class BatchReportConfig {
         };
     }
 
+    // Item Writer
     @Bean
     public ItemWriter<CountEnrollmentInWeekResponse> writerForExportReport() {
         FlatFileItemWriter<CountEnrollmentInWeekResponse> writer = new FlatFileItemWriter<>();
@@ -77,6 +80,7 @@ public class BatchReportConfig {
         return writer;
     }
 
+    // Step
     @Bean
     public Step exportReportStep1(PlatformTransactionManager batchTransactionManager) {
         return new StepBuilder("exportReportStep1", jobRepository)
@@ -86,6 +90,7 @@ public class BatchReportConfig {
                 .build();
     }
 
+    // Job
     @Bean
     public Job exportReportJob(Step exportReportStep1) {
         return new JobBuilder("exportReportJob1", jobRepository)

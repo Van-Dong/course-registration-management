@@ -14,6 +14,8 @@ import com.dongnv.courseregistrationmanagement.model.Course;
 
 @Repository
 public interface CourseRepository extends JpaRepository<Course, Long> {
+
+    // Đếm số đăng ký của từng khóa học trong một tuần nào đó
     @Query(
             """
 			SELECT new com.dongnv.courseregistrationmanagement.dto.response.CountEnrollmentInWeekResponse(c.id, c.title, c.currentEnrollments, c.maxEnrollments, count(e) AS countEnrollment)
@@ -25,9 +27,10 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
             @Param("endOfWeek") LocalDateTime endOfWeek,
             Pageable pageable);
 
-    @Query("SELECT c.currentEnrollments < c.maxEnrollments FROM Course c WHERE c.id = :id")
-    boolean currentEnrollmentsLessThanMaxEnrollmentsById(@Param("id") Long id);
+    @Query("SELECT c.currentEnrollments < c.maxEnrollments FROM Course c WHERE c.id = :courseId")
+    boolean courseIsFull(@Param("courseId") Long courseId);
 
+    // Lấy danh sách khóa học đã đăng ký của người dùng có userId
     @Query(
             "SELECT c FROM Course c JOIN Enrollment e ON c.id = e.courseId WHERE e.userId = :userId ORDER BY e.enrollmentDate DESC")
     Page<Course> findAllByUserId(@Param("userId") Long userId, Pageable pageable);

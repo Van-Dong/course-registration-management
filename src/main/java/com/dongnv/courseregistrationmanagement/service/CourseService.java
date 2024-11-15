@@ -70,7 +70,8 @@ public class CourseService {
     }
 
     public CourseResponse updateCourse(CourseUpdateRequest request, Long id) {
-        Course course = courseRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.COURSE_NOT_FOUND));
+        Course course = courseRepository.findById(id).orElseThrow(
+                () -> new AppException(ErrorCode.COURSE_NOT_FOUND));
         courseMapper.updateCourse(course, request);
         course = courseRepository.save(course);
         return courseMapper.toCourseResponse(course);

@@ -17,7 +17,7 @@ Quản trị viên có thể quản lý danh sách khóa học và xem báo cáo
    ```bash
    cd course-registration-management
 3. Edit the `docker-compose.yml` file to set your environment variables as needed
-4. Start the application
+4. Start the application. Note: Default account admin is "admin:admin"
    ```bash
    docker compose up
 5. Stop the application

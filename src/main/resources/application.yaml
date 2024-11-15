@@ -52,4 +52,7 @@ jwt:
   expired-with-remember-me: 4320 # 3 days
   cookie-name: access_token
 
+app:
+  account-admin:
+    password: ${PASSWORD_ADMIN_INIT:admin}
 

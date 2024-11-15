@@ -1,5 +1,6 @@
 package com.dongnv.courseregistrationmanagement.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,6 +15,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Configuration
 public class ApplicationInitConfig {
+    @Value("${app.account-admin.password}")
+    private String passwordAdmin;
 
     @Bean
     ApplicationRunner applicationRunner(PasswordEncoder passwordEncoder, UserRepository userRepository) {
@@ -23,7 +26,7 @@ public class ApplicationInitConfig {
             if (!userRepository.existsByEmail("admin")) {
                 User user = User.builder()
                         .email("admin")
-                        .password(passwordEncoder.encode("admin"))
+                        .password(passwordEncoder.encode(passwordAdmin))
                         .role(Role.ADMIN)
                         .build();
                 userRepository.save(user);
